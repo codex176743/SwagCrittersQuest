@@ -1,9 +1,7 @@
+import RedeemCard from "@/components/redeem/redeem-card";
+
 const RedeemPage = () => {
-  return (
-    <div>
-      <h1>Redeem Page</h1>
-    </div>
-  );
+  return <RedeemCard />;
 };
 
 export default RedeemPage;

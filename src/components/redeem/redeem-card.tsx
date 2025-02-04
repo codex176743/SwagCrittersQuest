@@ -1,10 +1,8 @@
 "use client";
 
-import RouletteSpin from "./roulette";
-
-const RevealCard = () => {
+const RedeemCard = () => {
   const handleClick = () => {
-    console.log("Reveal Clicked!");
+    console.log("Burn & Ship Clicked!");
   };
 
   return (
@@ -14,7 +12,6 @@ const RevealCard = () => {
           <Card key={index} onClick={handleClick} />
         ))}
       </div>
-      <RouletteSpin />
     </div>
   );
 };
@@ -23,7 +20,7 @@ const Card = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className="flex flex-col gap-2 bg-black items-center">
       <img
-        src="/images/unrevealed.jpg"
+        src="/images/multiplier.jpg"
         alt="unrevealed"
         className="w-[200px] h-[200px]"
       />
@@ -31,10 +28,10 @@ const Card = ({ onClick }: { onClick: () => void }) => {
         className="bg-yellow-500 p-1 text-gray-500 font-semibold text-[24px] text-center"
         onClick={onClick}
       >
-        Reveal
+        Burn & Ship
       </button>
     </div>
   );
 };
 
-export default RevealCard;
+export default RedeemCard;
