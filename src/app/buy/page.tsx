@@ -1,4 +1,4 @@
-import CarouselCard from "@/components/carousel-card";
+import CarouselCard from "@/components/buy/carousel-card";
 
 const BuyPage = () => {
   return <CarouselCard />;

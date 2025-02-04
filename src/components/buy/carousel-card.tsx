@@ -35,6 +35,11 @@ const cards = [
     mintedNumber: 100,
     totalSupply: 2500,
   },
+  {
+    date: "July 2025",
+    mintedNumber: 100,
+    totalSupply: 2500,
+  },
 ];
 
 const CarouselCard = () => {
@@ -47,7 +52,7 @@ const CarouselCard = () => {
       opts={{
         align: "start",
       }}
-      className="container mx-auto"
+      className="container mx-auto cursor-grab active:cursor-grabbing"
     >
       <CarouselContent>
         {cards.map(({ date, mintedNumber, totalSupply }) => (
@@ -80,19 +85,19 @@ const Card = ({
 }) => {
   return (
     <div className="flex items-center justify-center">
-      <div className="flex flex-col w-[300px] border-4 border-black p-5 gap-5 text-center">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-col justify-between w-[300px] border-[5px] border-black p-5 gap-3 text-center">
+        <div className="flex flex-col">
           <p className="font-bold text-[30px]">{date}</p>
           <p className="text-[30px]">Swag Drop</p>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col">
           <p className="font-semibold text-[24px]">Total Minted</p>
           <p className="text-[24px]">
             {mintedNumber}/{totalSupply}
           </p>
         </div>
         <button
-          className="border-4 border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]"
+          className="border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]"
           onClick={() => onClick(date)}
         >
           BUY NOW

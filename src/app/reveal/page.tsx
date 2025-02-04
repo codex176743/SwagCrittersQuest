@@ -1,9 +1,7 @@
+import RevealCard from "@/components/reveal/reveal-card";
+
 const RevealPage = () => {
-  return (
-    <div>
-      <h1>Reveal Page</h1>
-    </div>
-  );
+  return <RevealCard />;
 };
 
 export default RevealPage;

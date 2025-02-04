@@ -45,11 +45,11 @@ const Card = ({
   path: string;
 }) => {
   return (
-    <div className="flex flex-col w-[300px] border-4 border-black p-5 space-y-10 text-center">
+    <div className="flex flex-col justify-between w-[300px] border-[5px] border-black p-5 gap-5 text-center">
       <p className="font-bold text-[30px]">{title}</p>
       <p className="font-semibold text-[24px]">{description}</p>
       <Link
-        className="border-4 border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]"
+        className="border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]"
         href={path}
       >
         {children}
