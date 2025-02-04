@@ -1,9 +1,7 @@
+import CarouselCard from "@/components/carousel-card";
+
 const BuyPage = () => {
-  return (
-    <div>
-      <h1>Buy Page</h1>
-    </div>
-  );
+  return <CarouselCard />;
 };
 
 export default BuyPage;
