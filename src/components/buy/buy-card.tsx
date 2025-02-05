@@ -44,7 +44,7 @@ const cards = [
   },
 ];
 
-const CarouselCard = () => {
+const BuyCard = () => {
   const { publicKey } = useWallet();
   const [_, setOpen] = useAtom(openDlgAtom);
 
@@ -116,4 +116,4 @@ const Card = ({
   );
 };
 
-export default CarouselCard;
+export default BuyCard;
