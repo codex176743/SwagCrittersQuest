@@ -1,6 +1,7 @@
 "use client";
 
-import * as React from "react";
+import { useAtom } from "jotai";
+import { useWallet } from "@solana/wallet-adapter-react";
 import {
   Carousel,
   CarouselContent,
@@ -8,6 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { openDlgAtom } from "@/atoms/openDlgAtom";
 
 const cards = [
   {
@@ -43,7 +45,14 @@ const cards = [
 ];
 
 const CarouselCard = () => {
+  const { publicKey } = useWallet();
+  const [_, setOpen] = useAtom(openDlgAtom);
+
   const handleClick = (date: string) => {
+    if (!publicKey) {
+      setOpen(true);
+      return;
+    }
     console.log("Date: ", date);
   };
 

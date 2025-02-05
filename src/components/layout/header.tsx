@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Wallet } from "lucide-react";
+import WalletConnection from "../solana/wallet-connection";
 
 const links = [
   {
@@ -45,10 +46,7 @@ const Header = () => {
           ))}
         </div>
         <div className="flex flex-row justify-between space-x-10">
-          <button className="flex flex-col p-1 border-[3px] border-black rounded-md bg-yellow-500 items-center">
-            <Wallet fill="black" />
-            <span className="text-[10px] font-semibold">CONNECT</span>
-          </button>
+          <WalletConnection />
           <button className="px-10 bg-yellow-800 text-[20px] text-white font-semibold">
             SWAG STORE
           </button>
