@@ -8,7 +8,10 @@ import {
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
-// import { UnsafeBurnerWalletAdapter } from "@solana/wallet-adapter-wallets";
+// import {
+//   PhantomWalletAdapter,
+//   SolflareWalletAdapter,
+// } from "@solana/wallet-adapter-wallets";
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -23,7 +26,8 @@ export default function WalletContextProvider({
   const wallets = useMemo(
     () => [
       // manually add any legacy wallet adapters here
-      // new UnsafeBurnerWalletAdapter(),
+      // new PhantomWalletAdapter(),
+      // new SolflareWalletAdapter(),
     ],
     [network]
   );

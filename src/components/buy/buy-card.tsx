@@ -1,7 +1,10 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useState } from "react";
+import * as anchor from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { LAMPORTS_PER_SOL, Keypair } from "@solana/web3.js";
 import {
   Carousel,
   CarouselContent,
@@ -10,6 +13,21 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { openDlgAtom } from "@/atoms/openDlgAtom";
+import {
+  SERVER_ADDRESS,
+  TOKEN_METADATA_PROGRAM_ID,
+  SYSTEM_PROGRAM_ID,
+  SPL_TOKEN_PROGRAM_ID,
+  MINT_AUTHORITY,
+  COLLECTION_MINT,
+} from "@/config";
+import {
+  getMetadata,
+  getMasterEdition,
+  getAssociatedTokenAddress,
+  getBalances,
+} from "@/lib/solana";
+import { useAnchor } from "@/hooks/useAnchor";
 
 const cards = [
   {
@@ -45,15 +63,102 @@ const cards = [
 ];
 
 const BuyCard = () => {
+  const { program } = useAnchor();
   const { publicKey } = useWallet();
   const [_, setOpen] = useAtom(openDlgAtom);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleClick = (date: string) => {
+  const handleClick = async (date: string) => {
     if (!publicKey) {
       setOpen(true);
       return;
     }
     console.log("Date: ", date);
+
+    setIsLoading(true);
+    try {
+      const mintKeypair = Keypair.generate();
+      const mint = mintKeypair.publicKey;
+
+      const nft_uri =
+        "https://ipfs.io/ipfs/bafkreig5a5f7mc7w7ltaytfip7p4umpxdtwbkzm4v7ews5tszhnwd6p5om";
+      const amount = 0.1 * LAMPORTS_PER_SOL;
+
+      console.log("\nMint", mint.toBase58());
+
+      const metadata = await getMetadata(mint);
+      console.log("Metadata", metadata.toBase58());
+
+      const masterEdition = await getMasterEdition(mint);
+      console.log("Master Edition", masterEdition.toBase58());
+
+      const destination = getAssociatedTokenAddress(mint, publicKey);
+      console.log("Destination", destination.toBase58());
+
+      const [checkRevealPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("minting_time"), mint.toBuffer()],
+        program.programId
+      );
+
+      const tx = await program.methods
+        .mintNft(nft_uri, new anchor.BN(amount))
+        .accountsPartial({
+          owner: publicKey,
+          recipient: SERVER_ADDRESS,
+          destination,
+          metadata,
+          masterEdition,
+          mint,
+          mintAuthority: MINT_AUTHORITY,
+          collectionMint: COLLECTION_MINT,
+          systemProgram: SYSTEM_PROGRAM_ID,
+          tokenProgram: SPL_TOKEN_PROGRAM_ID,
+          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        })
+        .signers([mintKeypair])
+        .rpc({
+          skipPreflight: true,
+        });
+      console.log("NFT Mint Successs\n", tx);
+      await getBalances("My Wallet", publicKey);
+      await getBalances("Owner Wallet", SERVER_ADDRESS);
+      const check_reveal = await program.account.checkRevealState.fetch(
+        checkRevealPDA
+      );
+      console.log("Reveal is allow?: ", check_reveal.isAllow);
+      console.log("Minting Time: ", check_reveal.timestamp);
+
+      const collectionMetadata = await getMetadata(COLLECTION_MINT);
+      console.log("Collection Metadata", collectionMetadata.toBase58());
+
+      const collectionMasterEdition = await getMasterEdition(COLLECTION_MINT);
+      console.log(
+        "Collection Master Edition",
+        collectionMasterEdition.toBase58()
+      );
+      const tx1 = await program.methods
+        .verifyCollection()
+        .accountsPartial({
+          authority: publicKey,
+          metadata,
+          mint,
+          mintAuthority: MINT_AUTHORITY,
+          collectionMint: COLLECTION_MINT,
+          collectionMetadata,
+          collectionMasterEdition,
+          systemProgram: SYSTEM_PROGRAM_ID,
+          sysvarInstruction: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
+          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        })
+        .rpc({
+          skipPreflight: true,
+        });
+      console.log("Verify Collection Successs\n", tx1);
+    } catch (error) {
+      console.log("Failed to NFT mint!\n", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -70,6 +175,7 @@ const BuyCard = () => {
               date={date}
               mintedNumber={mintedNumber}
               totalSupply={totalSupply}
+              isLoading={isLoading}
               onClick={() => handleClick(date)}
             />
           </CarouselItem>
@@ -85,11 +191,13 @@ const Card = ({
   date,
   mintedNumber,
   totalSupply,
+  isLoading,
   onClick,
 }: {
   date: string;
   mintedNumber: number;
   totalSupply: number;
+  isLoading: boolean;
   onClick: (date: string) => void;
 }) => {
   return (
@@ -106,7 +214,8 @@ const Card = ({
           </p>
         </div>
         <button
-          className="border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]"
+          disabled={isLoading}
+          className={`border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]`}
           onClick={() => onClick(date)}
         >
           BUY NOW

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import WalletContextProvider from "@/components/solana/wallet-provider";
+import WalletContextProvider from "@/contexts/wallet-provider";
 import { UILayout } from "@/components/layout/ui-layout";
 
 const geistSans = Geist({
