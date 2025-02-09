@@ -3,7 +3,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey, clusterApiUrl, SystemProgram } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { useWallet } from "@solana/wallet-adapter-react";
 
 export const SOLANA_RPC_URL = "https://api.devnet.solana.com";
 
