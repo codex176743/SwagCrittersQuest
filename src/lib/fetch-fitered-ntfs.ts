@@ -14,7 +14,6 @@ export const fetchFiteredNFTs = async (
   collectionMint: string,
   type: string
 ) => {
-  // Create a UMI instance
   const umi = createUmi(clusterApiUrl("devnet"));
   umi.use(mplTokenMetadata());
 
