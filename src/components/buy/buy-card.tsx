@@ -63,6 +63,39 @@ const cards = [
 ];
 
 const BuyCard = () => {
+  return (
+    <Carousel
+      opts={{
+        align: "start",
+      }}
+      className="container mx-auto cursor-grab active:cursor-grabbing"
+    >
+      <CarouselContent>
+        {cards.map(({ date, mintedNumber, totalSupply }) => (
+          <CarouselItem key={date} className="pl-1 md:basis-1/2 lg:basis-1/3">
+            <Card
+              date={date}
+              mintedNumber={mintedNumber}
+              totalSupply={totalSupply}
+            />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+  );
+};
+
+const Card = ({
+  date,
+  mintedNumber,
+  totalSupply,
+}: {
+  date: string;
+  mintedNumber: number;
+  totalSupply: number;
+}) => {
   const { program } = useAnchor();
   const { publicKey } = useWallet();
   const [_, setOpen] = useAtom(openDlgAtom);
@@ -81,7 +114,7 @@ const BuyCard = () => {
       const mint = mintKeypair.publicKey;
 
       const nft_uri =
-        "https://ipfs.io/ipfs/bafkreig5a5f7mc7w7ltaytfip7p4umpxdtwbkzm4v7ews5tszhnwd6p5om";
+        "https://ipfs.io/ipfs/bafkreiebgoqacrjm7omwjisjlv3djfc3fcb66glup3cxikc23zihcbmo34";
       const amount = 0.1 * LAMPORTS_PER_SOL;
 
       console.log("\nMint", mint.toBase58());
@@ -162,45 +195,6 @@ const BuyCard = () => {
   };
 
   return (
-    <Carousel
-      opts={{
-        align: "start",
-      }}
-      className="container mx-auto cursor-grab active:cursor-grabbing"
-    >
-      <CarouselContent>
-        {cards.map(({ date, mintedNumber, totalSupply }) => (
-          <CarouselItem key={date} className="pl-1 md:basis-1/2 lg:basis-1/3">
-            <Card
-              date={date}
-              mintedNumber={mintedNumber}
-              totalSupply={totalSupply}
-              isLoading={isLoading}
-              onClick={() => handleClick(date)}
-            />
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
-  );
-};
-
-const Card = ({
-  date,
-  mintedNumber,
-  totalSupply,
-  isLoading,
-  onClick,
-}: {
-  date: string;
-  mintedNumber: number;
-  totalSupply: number;
-  isLoading: boolean;
-  onClick: (date: string) => void;
-}) => {
-  return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col justify-between w-[300px] border-[5px] border-black p-5 gap-3 text-center">
         <div className="flex flex-col">
@@ -216,7 +210,7 @@ const Card = ({
         <button
           disabled={isLoading}
           className={`border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]`}
-          onClick={() => onClick(date)}
+          onClick={() => handleClick(date)}
         >
           BUY NOW
         </button>

@@ -1,6 +1,9 @@
+"use client";
+
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey, clusterApiUrl, SystemProgram } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const SOLANA_RPC_URL = "https://api.devnet.solana.com";
 
@@ -28,5 +31,5 @@ export const MINT_AUTHORITY = anchor.web3.PublicKey.findProgramAddressSync(
 )[0];
 
 export const COLLECTION_MINT = new PublicKey(
-  "AEfGCs48S3sMxNX5JZLXDDquMP2JMr6wVRVR9PifGBhS"
+  "ATf288DYvVcB17hWkoZegCYEifVVjSjxk5Q13V9U4N1X"
 );
