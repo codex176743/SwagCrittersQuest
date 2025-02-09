@@ -12,8 +12,6 @@
 
 # testing
 /coverage
-/data
-/config.ts
 
 # next.js
 /.next/
@@ -41,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/data
+/src/config.ts
