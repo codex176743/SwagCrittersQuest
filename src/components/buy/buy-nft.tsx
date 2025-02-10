@@ -5,13 +5,6 @@ import { useState } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, Keypair } from "@solana/web3.js";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { openDlgAtom } from "@/atoms/openDlgAtom";
 import {
   SERVER_ADDRESS,
@@ -29,65 +22,7 @@ import {
 } from "@/lib/solana";
 import { useAnchor } from "@/hooks/useAnchor";
 
-const cards = [
-  {
-    date: "February 2025",
-    mintedNumber: 500,
-    totalSupply: 2500,
-  },
-  {
-    date: "March 2025",
-    mintedNumber: 400,
-    totalSupply: 2500,
-  },
-  {
-    date: "April 2025",
-    mintedNumber: 300,
-    totalSupply: 2500,
-  },
-  {
-    date: "May 2025",
-    mintedNumber: 200,
-    totalSupply: 2500,
-  },
-  {
-    date: "June 2025",
-    mintedNumber: 100,
-    totalSupply: 2500,
-  },
-  {
-    date: "July 2025",
-    mintedNumber: 100,
-    totalSupply: 2500,
-  },
-];
-
-const BuyCard = () => {
-  return (
-    <Carousel
-      opts={{
-        align: "start",
-      }}
-      className="container mx-auto cursor-grab active:cursor-grabbing"
-    >
-      <CarouselContent>
-        {cards.map(({ date, mintedNumber, totalSupply }) => (
-          <CarouselItem key={date} className="pl-1 md:basis-1/2 lg:basis-1/3">
-            <Card
-              date={date}
-              mintedNumber={mintedNumber}
-              totalSupply={totalSupply}
-            />
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
-  );
-};
-
-const Card = ({
+const BuyNFT = ({
   date,
   mintedNumber,
   totalSupply,
@@ -96,18 +31,17 @@ const Card = ({
   mintedNumber: number;
   totalSupply: number;
 }) => {
-  const { program } = useAnchor();
   const { publicKey } = useWallet();
+  const { program } = useAnchor();
   const [_, setOpen] = useAtom(openDlgAtom);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleClick = async (date: string) => {
+  const handleClick = async () => {
     if (!publicKey) {
       setOpen(true);
       return;
     }
     console.log("Date: ", date);
-
     setIsLoading(true);
     try {
       const mintKeypair = Keypair.generate();
@@ -210,7 +144,7 @@ const Card = ({
         <button
           disabled={isLoading}
           className={`border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]`}
-          onClick={() => handleClick(date)}
+          onClick={() => handleClick()}
         >
           BUY NOW
         </button>
@@ -219,4 +153,4 @@ const Card = ({
   );
 };
 
-export default BuyCard;
+export default BuyNFT;

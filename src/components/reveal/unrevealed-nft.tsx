@@ -12,7 +12,6 @@ import {
   TOKEN_METADATA_PROGRAM_ID,
 } from "@/config";
 import { useToast } from "@/hooks/use-toast";
-import { getNFTMetadata } from "@/lib/get-nft-metadata";
 
 const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { publicKey } = useWallet();
@@ -28,27 +27,24 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   useEffect(() => {
     const fetchMetaData = async () => {
       try {
-        const data = await fetch(nft.metadata.uri).then((res) => res.json());
-        setImageUrl(data["image"]);
+        const response = await fetch(nft.metadata.uri);
+        const data = await response.json();
+        setImageUrl(data.image);
       } catch (error) {
         console.log("fetch metadata failed: ", error);
-      }
-
-      if (!imageUrl) {
-        setImageUrl("/images/unrevealed.jpg");
       }
     };
 
     fetchMetaData();
   }, []);
 
-  const handleClick = async (mint: string) => {
-    console.log("Reveal Clicked! Mint Address", mint);
-    const mintAddress = new PublicKey(mint);
+  const handleClick = async () => {
+    console.log("Reveal Clicked! Mint Address", nft.mint.publicKey);
+    const mintAddress = new PublicKey(nft.mint.publicKey);
     const mintMetadata = await getMetadata(mintAddress);
 
     const new_uri =
-      "ipfs://bafkreiepq7s6y3tctidp5ihdymrb2h2wb7dteniays3g7yijzmi3qrhtf4";
+      "https://ipfs.io/ipfs/bafkreigr4akedly3kv4el272i3qtaqak3n4lz6m76bgx3rzcxs6zy3udom";
 
     try {
       const tx = await program.methods
@@ -71,13 +67,13 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         description: "You NFT Revealing is Success.",
       });
 
-      try {
-        const asset = await getNFTMetadata(mint);
-        const data = await fetch(asset.uri).then((res) => res.json());
-        console.log("Updated Image URL", data["image"]);
-      } catch (error) {
-        console.log("fetch metadata failed: ", error);
-      }
+      // try {
+      //   const asset = await getNFTMetadata(nft.mint.publicKey);
+      //   const data = await fetch(asset.uri).then((res) => res.json());
+      //   console.log("Updated Image URL", data["image"]);
+      // } catch (error) {
+      //   console.log("fetch metadata failed: ", error);
+      // }
     } catch (err) {
       console.error("Failed to reveal NFT:", err);
       toast({
@@ -89,10 +85,14 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
 
   return (
     <div className="flex flex-col gap-2 bg-black items-center">
-      <img src={imageUrl} alt="unrevealed" className="w-[200px] h-[200px]" />
+      <img
+        src={imageUrl}
+        alt="unrevealed"
+        className="w-[200px] h-[200px] bg-white"
+      />
       <button
         className="bg-yellow-500 p-1 text-gray-500 font-semibold text-[24px] text-center"
-        onClick={() => handleClick(nft.mint.publicKey)}
+        onClick={() => handleClick()}
       >
         Reveal
       </button>

@@ -1,6 +1,6 @@
 import UnRevealedNFT from "@/components/reveal/unrevealed-nft";
 import Roulette from "@/components/reveal/roulette";
-import { fetchFiteredNFTs } from "@/lib/fetch-fitered-ntfs";
+import { fetchFiteredNFTs } from "@/lib/get-nft";
 
 const RevealPage = async () => {
   const collectionMint = "ATf288DYvVcB17hWkoZegCYEifVVjSjxk5Q13V9U4N1X";
