@@ -1,16 +1,7 @@
 "use client";
 
-// import { redirect } from "next/navigation";
-import CounterState from "@/components/counter-state";
-import IncrementButton from "@/components/increment-button";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  // redirect("/home");
-
-  return (
-    <>
-      <CounterState />
-      <IncrementButton />
-    </>
-  );
+  redirect("/home");
 }

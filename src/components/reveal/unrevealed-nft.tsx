@@ -1,6 +1,8 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import * as anchor from "@coral-xyz/anchor";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -9,20 +11,17 @@ import { useAnchor } from "@/hooks/useAnchor";
 import {
   COLLECTION_MINT,
   MINT_AUTHORITY,
+  SYSTEM_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID,
 } from "@/config";
 import { useToast } from "@/hooks/use-toast";
 
 const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { publicKey } = useWallet();
-
-  if (!publicKey) {
-    return;
-  }
-
   const { program } = useAnchor();
   const { toast } = useToast();
   const [imageUrl, setImageUrl] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchMetaData = async () => {
@@ -39,22 +38,30 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   }, []);
 
   const handleClick = async () => {
+    if (!publicKey) {
+      return;
+    }
+
     console.log("Reveal Clicked! Mint Address", nft.mint.publicKey);
+
+    setIsLoading(true);
+
     const mintAddress = new PublicKey(nft.mint.publicKey);
     const mintMetadata = await getMetadata(mintAddress);
 
-    const new_uri =
-      "https://ipfs.io/ipfs/bafkreigr4akedly3kv4el272i3qtaqak3n4lz6m76bgx3rzcxs6zy3udom";
+    const nft_name = "Critters";
+    const delay_time = 0;
 
     try {
       const tx = await program.methods
-        .revealNft(new_uri)
+        .revealNft(nft_name, new anchor.BN(delay_time))
         .accountsPartial({
           owner: publicKey,
           mint: mintAddress,
           metadata: mintMetadata,
           updateAuthority: MINT_AUTHORITY,
           collectionMint: COLLECTION_MINT,
+          systemProgram: SYSTEM_PROGRAM_ID,
           tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
         })
         .rpc({
@@ -66,20 +73,15 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         title: "NFT Revealed!",
         description: "You NFT Revealing is Success.",
       });
-
-      // try {
-      //   const asset = await getNFTMetadata(nft.mint.publicKey);
-      //   const data = await fetch(asset.uri).then((res) => res.json());
-      //   console.log("Updated Image URL", data["image"]);
-      // } catch (error) {
-      //   console.log("fetch metadata failed: ", error);
-      // }
+      redirect("/reveal");
     } catch (err) {
       console.error("Failed to reveal NFT:", err);
       toast({
         variant: "destructive",
         description: "Failed to reveal NFT!",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -91,6 +93,7 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         className="w-[200px] h-[200px] bg-white"
       />
       <button
+        disabled={isLoading}
         className="bg-yellow-500 p-1 text-gray-500 font-semibold text-[24px] text-center"
         onClick={() => handleClick()}
       >

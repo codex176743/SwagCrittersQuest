@@ -1,37 +1,132 @@
-{
-  "address": "FCB6y6NyGSfaFhhukF34YoAbw1kN7jktjX7VpsQWg68",
+/**
+ * Program IDL in camelCase format in order to be used in JS/TS.
+ *
+ * Note that this is only a type helper and is not the actual IDL. The original
+ * IDL can be found at `target/idl/critters_nft_contract.json`.
+ */
+export type CrittersNftContract = {
+  "address": "J1cjK26QA4NSLanpZmmDR2sLcy98CMuqiGYC2NCPohGk",
   "metadata": {
-    "name": "critters_nft",
+    "name": "crittersNftContract",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
   },
   "instructions": [
     {
-      "name": "create_collection",
+      "name": "burnMetadata",
       "discriminator": [
-        156,
-        251,
-        92,
-        54,
-        233,
-        2,
-        16,
-        82
+        164,
+        3,
+        247,
+        68,
+        220,
+        22,
+        109,
+        102
       ],
       "accounts": [
         {
-          "name": "user",
+          "name": "owner",
           "writable": true,
           "signer": true
         },
         {
           "name": "mint",
-          "writable": true,
-          "signer": true
+          "writable": true
         },
         {
-          "name": "mint_authority",
+          "name": "tokenAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "mintAuthority",
           "pda": {
             "seeds": [
               {
@@ -56,7 +151,205 @@
           "writable": true
         },
         {
-          "name": "master_edition",
+          "name": "masterEdition",
+          "writable": true
+        },
+        {
+          "name": "collectionMetadata",
+          "writable": true
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "burnNft",
+      "discriminator": [
+        119,
+        13,
+        183,
+        17,
+        194,
+        243,
+        38,
+        31
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "tokenAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createCollection",
+      "discriminator": [
+        156,
+        251,
+        92,
+        54,
+        233,
+        2,
+        16,
+        82
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mintAuthority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "metadata",
+          "writable": true
+        },
+        {
+          "name": "masterEdition",
           "writable": true
         },
         {
@@ -150,23 +443,31 @@
           }
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "token_program",
+          "name": "tokenProgram",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associated_token_program",
+          "name": "associatedTokenProgram",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "token_metadata_program",
+          "name": "tokenMetadataProgram",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
       "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "symbol",
+          "type": "string"
+        },
         {
           "name": "uri",
           "type": "string"
@@ -174,88 +475,7 @@
       ]
     },
     {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  117,
-                  110,
-                  116,
-                  101,
-                  114
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "user",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "counter",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  117,
-                  110,
-                  116,
-                  101,
-                  114
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "mint_nft",
+      "name": "mintNft",
       "discriminator": [
         211,
         57,
@@ -376,11 +596,11 @@
           "writable": true
         },
         {
-          "name": "master_edition",
+          "name": "masterEdition",
           "writable": true
         },
         {
-          "name": "mint_authority",
+          "name": "mintAuthority",
           "pda": {
             "seeds": [
               {
@@ -401,28 +621,24 @@
           }
         },
         {
-          "name": "collection_mint",
-          "writable": true
-        },
-        {
-          "name": "check_reveal",
+          "name": "revealState",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  109,
-                  105,
-                  110,
-                  116,
-                  105,
-                  110,
-                  103,
+                  114,
+                  101,
+                  118,
+                  101,
+                  97,
+                  108,
                   95,
+                  115,
                   116,
-                  105,
-                  109,
+                  97,
+                  116,
                   101
                 ]
               },
@@ -434,25 +650,37 @@
           }
         },
         {
-          "name": "system_program",
+          "name": "collectionMint",
+          "writable": true
+        },
+        {
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "token_program",
+          "name": "tokenProgram",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associated_token_program",
+          "name": "associatedTokenProgram",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "token_metadata_program",
+          "name": "tokenMetadataProgram",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
       "args": [
         {
+          "name": "name",
+          "type": "string"
+        },
+        {
           "name": "uri",
+          "type": "string"
+        },
+        {
+          "name": "realUri",
           "type": "string"
         },
         {
@@ -462,7 +690,7 @@
       ]
     },
     {
-      "name": "reveal_nft",
+      "name": "revealNft",
       "discriminator": [
         193,
         192,
@@ -488,7 +716,7 @@
           "writable": true
         },
         {
-          "name": "update_authority",
+          "name": "updateAuthority",
           "pda": {
             "seeds": [
               {
@@ -509,28 +737,28 @@
           }
         },
         {
-          "name": "collection_mint",
+          "name": "collectionMint",
           "writable": true
         },
         {
-          "name": "check_reveal",
+          "name": "revealState",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  109,
-                  105,
-                  110,
-                  116,
-                  105,
-                  110,
-                  103,
+                  114,
+                  101,
+                  118,
+                  101,
+                  97,
+                  108,
                   95,
+                  115,
                   116,
-                  105,
-                  109,
+                  97,
+                  116,
                   101
                 ]
               },
@@ -542,23 +770,27 @@
           }
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "token_metadata_program",
+          "name": "tokenMetadataProgram",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
       "args": [
         {
-          "name": "new_uri",
+          "name": "name",
           "type": "string"
+        },
+        {
+          "name": "delayTime",
+          "type": "i64"
         }
       ]
     },
     {
-      "name": "verify_collection",
+      "name": "verifyCollection",
       "discriminator": [
         56,
         113,
@@ -582,7 +814,7 @@
           "name": "mint"
         },
         {
-          "name": "mint_authority",
+          "name": "mintAuthority",
           "pda": {
             "seeds": [
               {
@@ -603,25 +835,25 @@
           }
         },
         {
-          "name": "collection_mint"
+          "name": "collectionMint"
         },
         {
-          "name": "collection_metadata",
+          "name": "collectionMetadata",
           "writable": true
         },
         {
-          "name": "collection_master_edition"
+          "name": "collectionMasterEdition"
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "sysvar_instruction",
+          "name": "sysvarInstruction",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "token_metadata_program",
+          "name": "tokenMetadataProgram",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
@@ -630,76 +862,47 @@
   ],
   "accounts": [
     {
-      "name": "CheckRevealState",
+      "name": "revealState",
       "discriminator": [
-        134,
-        164,
-        129,
-        73,
+        85,
+        66,
+        94,
+        71,
         182,
-        5,
-        186,
-        115
-      ]
-    },
-    {
-      "name": "Counter",
-      "discriminator": [
-        255,
-        176,
-        4,
-        245,
-        188,
-        253,
-        124,
-        25
+        32,
+        192,
+        116
       ]
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "RevealTimeError",
+      "name": "revealTimeError",
       "msg": "Now is not allowed to reveal!"
     },
     {
       "code": 6001,
-      "name": "BurnError",
+      "name": "burnError",
       "msg": "NFT Burn Failed!"
     }
   ],
   "types": [
     {
-      "name": "CheckRevealState",
+      "name": "revealState",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "is_allow",
-            "type": "bool"
-          },
-          {
-            "name": "timestamp",
+            "name": "mintTime",
             "type": "i64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Counter",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "count",
-            "type": "u64"
           },
           {
-            "name": "bump",
-            "type": "u8"
+            "name": "realUri",
+            "type": "string"
           }
         ]
       }
     }
   ]
-}
+};

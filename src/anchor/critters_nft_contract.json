@@ -1,43 +1,126 @@
-/**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/critters_nft.json`.
- */
-export type CrittersNft = {
-  "address": "FCB6y6NyGSfaFhhukF34YoAbw1kN7jktjX7VpsQWg68",
+{
+  "address": "J1cjK26QA4NSLanpZmmDR2sLcy98CMuqiGYC2NCPohGk",
   "metadata": {
-    "name": "crittersNft",
+    "name": "critters_nft_contract",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
   },
   "instructions": [
     {
-      "name": "createCollection",
+      "name": "burn_metadata",
       "discriminator": [
-        156,
-        251,
-        92,
-        54,
-        233,
-        2,
-        16,
-        82
+        164,
+        3,
+        247,
+        68,
+        220,
+        22,
+        109,
+        102
       ],
       "accounts": [
         {
-          "name": "user",
+          "name": "owner",
           "writable": true,
           "signer": true
         },
         {
           "name": "mint",
-          "writable": true,
-          "signer": true
+          "writable": true
         },
         {
-          "name": "mintAuthority",
+          "name": "token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "mint_authority",
           "pda": {
             "seeds": [
               {
@@ -62,7 +145,205 @@ export type CrittersNft = {
           "writable": true
         },
         {
-          "name": "masterEdition",
+          "name": "master_edition",
+          "writable": true
+        },
+        {
+          "name": "collection_metadata",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "token_metadata_program",
+          "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "burn_nft",
+      "discriminator": [
+        119,
+        13,
+        183,
+        17,
+        194,
+        243,
+        38,
+        31
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "token_metadata_program",
+          "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_collection",
+      "discriminator": [
+        156,
+        251,
+        92,
+        54,
+        233,
+        2,
+        16,
+        82
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "metadata",
+          "writable": true
+        },
+        {
+          "name": "master_edition",
           "writable": true
         },
         {
@@ -156,23 +437,31 @@ export type CrittersNft = {
           }
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "tokenMetadataProgram",
+          "name": "token_metadata_program",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
       "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "symbol",
+          "type": "string"
+        },
         {
           "name": "uri",
           "type": "string"
@@ -180,88 +469,7 @@ export type CrittersNft = {
       ]
     },
     {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  117,
-                  110,
-                  116,
-                  101,
-                  114
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "user",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "counter",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  117,
-                  110,
-                  116,
-                  101,
-                  114
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "mintNft",
+      "name": "mint_nft",
       "discriminator": [
         211,
         57,
@@ -382,11 +590,11 @@ export type CrittersNft = {
           "writable": true
         },
         {
-          "name": "masterEdition",
+          "name": "master_edition",
           "writable": true
         },
         {
-          "name": "mintAuthority",
+          "name": "mint_authority",
           "pda": {
             "seeds": [
               {
@@ -407,28 +615,24 @@ export type CrittersNft = {
           }
         },
         {
-          "name": "collectionMint",
-          "writable": true
-        },
-        {
-          "name": "checkReveal",
+          "name": "reveal_state",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  109,
-                  105,
-                  110,
-                  116,
-                  105,
-                  110,
-                  103,
+                  114,
+                  101,
+                  118,
+                  101,
+                  97,
+                  108,
                   95,
+                  115,
                   116,
-                  105,
-                  109,
+                  97,
+                  116,
                   101
                 ]
               },
@@ -440,25 +644,37 @@ export type CrittersNft = {
           }
         },
         {
-          "name": "systemProgram",
+          "name": "collection_mint",
+          "writable": true
+        },
+        {
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "tokenMetadataProgram",
+          "name": "token_metadata_program",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
       "args": [
         {
+          "name": "name",
+          "type": "string"
+        },
+        {
           "name": "uri",
+          "type": "string"
+        },
+        {
+          "name": "real_uri",
           "type": "string"
         },
         {
@@ -468,7 +684,7 @@ export type CrittersNft = {
       ]
     },
     {
-      "name": "revealNft",
+      "name": "reveal_nft",
       "discriminator": [
         193,
         192,
@@ -494,7 +710,7 @@ export type CrittersNft = {
           "writable": true
         },
         {
-          "name": "updateAuthority",
+          "name": "update_authority",
           "pda": {
             "seeds": [
               {
@@ -515,28 +731,28 @@ export type CrittersNft = {
           }
         },
         {
-          "name": "collectionMint",
+          "name": "collection_mint",
           "writable": true
         },
         {
-          "name": "checkReveal",
+          "name": "reveal_state",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  109,
-                  105,
-                  110,
-                  116,
-                  105,
-                  110,
-                  103,
+                  114,
+                  101,
+                  118,
+                  101,
+                  97,
+                  108,
                   95,
+                  115,
                   116,
-                  105,
-                  109,
+                  97,
+                  116,
                   101
                 ]
               },
@@ -548,23 +764,27 @@ export type CrittersNft = {
           }
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "tokenMetadataProgram",
+          "name": "token_metadata_program",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
       "args": [
         {
-          "name": "newUri",
+          "name": "name",
           "type": "string"
+        },
+        {
+          "name": "delay_time",
+          "type": "i64"
         }
       ]
     },
     {
-      "name": "verifyCollection",
+      "name": "verify_collection",
       "discriminator": [
         56,
         113,
@@ -588,7 +808,7 @@ export type CrittersNft = {
           "name": "mint"
         },
         {
-          "name": "mintAuthority",
+          "name": "mint_authority",
           "pda": {
             "seeds": [
               {
@@ -609,25 +829,25 @@ export type CrittersNft = {
           }
         },
         {
-          "name": "collectionMint"
+          "name": "collection_mint"
         },
         {
-          "name": "collectionMetadata",
+          "name": "collection_metadata",
           "writable": true
         },
         {
-          "name": "collectionMasterEdition"
+          "name": "collection_master_edition"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "sysvarInstruction",
+          "name": "sysvar_instruction",
           "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "tokenMetadataProgram",
+          "name": "token_metadata_program",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         }
       ],
@@ -636,76 +856,47 @@ export type CrittersNft = {
   ],
   "accounts": [
     {
-      "name": "checkRevealState",
+      "name": "RevealState",
       "discriminator": [
-        134,
-        164,
-        129,
-        73,
+        85,
+        66,
+        94,
+        71,
         182,
-        5,
-        186,
-        115
-      ]
-    },
-    {
-      "name": "counter",
-      "discriminator": [
-        255,
-        176,
-        4,
-        245,
-        188,
-        253,
-        124,
-        25
+        32,
+        192,
+        116
       ]
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "revealTimeError",
+      "name": "RevealTimeError",
       "msg": "Now is not allowed to reveal!"
     },
     {
       "code": 6001,
-      "name": "burnError",
+      "name": "BurnError",
       "msg": "NFT Burn Failed!"
     }
   ],
   "types": [
     {
-      "name": "checkRevealState",
+      "name": "RevealState",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "isAllow",
-            "type": "bool"
-          },
-          {
-            "name": "timestamp",
+            "name": "mint_time",
             "type": "i64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "counter",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "count",
-            "type": "u64"
           },
           {
-            "name": "bump",
-            "type": "u8"
+            "name": "real_uri",
+            "type": "string"
           }
         ]
       }
     }
   ]
-};
+}

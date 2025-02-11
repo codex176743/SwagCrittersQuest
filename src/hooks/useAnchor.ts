@@ -3,10 +3,10 @@
 import { useMemo } from "react";
 import { AnchorWallet, useWallet } from "@solana/wallet-adapter-react";
 import { Program, AnchorProvider, IdlAccounts } from "@coral-xyz/anchor";
-import { PublicKey, Connection } from "@solana/web3.js";
-import idl from "@/anchor/critters_nft.json";
-import { CrittersNft } from "@/types/critters_nft";
-import { PROGRAM_ID, NETWORK } from "@/config";
+import { Connection } from "@solana/web3.js";
+import idl from "@/anchor/critters_nft_contract.json";
+import { CrittersNftContract } from "@/types/critters_nft_contract";
+import { NETWORK } from "@/config";
 
 export const connection = new Connection(NETWORK || "devnet", "confirmed");
 
@@ -22,17 +22,11 @@ export const useAnchor = () => {
   }, [connection, wallet]);
 
   const program = useMemo(() => {
-    return new Program<CrittersNft>(idl as CrittersNft, provider);
+    return new Program<CrittersNftContract>(
+      idl as CrittersNftContract,
+      provider
+    );
   }, [provider]);
 
   return { program, provider };
 };
-
-export const [counterPDA] = PublicKey.findProgramAddressSync(
-  [Buffer.from("counter")],
-  PROGRAM_ID
-);
-
-// This is just a TypeScript type for the Counter data structure based on the IDL
-// We need this so TypeScript doesn't yell at us
-export type CounterData = IdlAccounts<CrittersNft>["counter"];

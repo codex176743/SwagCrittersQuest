@@ -41,7 +41,7 @@ export const fetchFiteredNFTs = async (
   );
 
   console.log(`Found ${allNFTs.length} NFTs for the owner:`);
-  console.log(JSON.stringify(allNFTs, null, 2));
+  // console.log(JSON.stringify(allNFTs, null, 2));
 
   const filtered_NFTs = allNFTs.filter(
     (nft) =>

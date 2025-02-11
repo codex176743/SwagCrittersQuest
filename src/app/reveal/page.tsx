@@ -3,7 +3,7 @@ import Roulette from "@/components/reveal/roulette";
 import { fetchFiteredNFTs } from "@/lib/get-nft";
 
 const RevealPage = async () => {
-  const collectionMint = "ATf288DYvVcB17hWkoZegCYEifVVjSjxk5Q13V9U4N1X";
+  const collectionMint = "FHyJRmiJqUzLzQtjdy96SUR7KKp5jvWFKVyJkCXZeMy9";
   const nfts = await fetchFiteredNFTs(collectionMint, "BLACKBOX");
   return (
     <div className="flex flex-col container mx-auto gap-10">

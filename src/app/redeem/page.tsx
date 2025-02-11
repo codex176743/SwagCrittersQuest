@@ -2,8 +2,8 @@ import RedeemNFT from "@/components/redeem/redeem-nft";
 import { fetchFiteredNFTs } from "@/lib/get-nft";
 
 const RedeemPage = async () => {
-  const collectionMint = "ATf288DYvVcB17hWkoZegCYEifVVjSjxk5Q13V9U4N1X";
-  const nfts = await fetchFiteredNFTs(collectionMint, "UPDATED");
+  const collectionMint = "FHyJRmiJqUzLzQtjdy96SUR7KKp5jvWFKVyJkCXZeMy9";
+  const nfts = await fetchFiteredNFTs(collectionMint, "");
 
   return (
     <div className="container mx-auto">
