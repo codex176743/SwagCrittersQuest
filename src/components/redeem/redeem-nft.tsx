@@ -19,10 +19,6 @@ const RedeemNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { toast } = useToast();
   const [imageUrl, setImageUrl] = useState<string>();
 
-  if (!publicKey) {
-    return;
-  }
-
   useEffect(() => {
     const fetchMetaData = async () => {
       try {
@@ -35,7 +31,11 @@ const RedeemNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     };
 
     fetchMetaData();
-  }, []);
+  }, [publicKey]);
+
+  if (!publicKey) {
+    return;
+  }
 
   const handleClick = async () => {
     console.log("Burn & Ship Clicked! Mint Address: ", nft.mint.publicKey);

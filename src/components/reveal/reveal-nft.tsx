@@ -1,6 +1,5 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
@@ -15,13 +14,15 @@ import {
   TOKEN_METADATA_PROGRAM_ID,
 } from "@/config";
 import { useToast } from "@/hooks/use-toast";
+import NFTDialog from "./nft-dialog";
 
-const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
+const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { publicKey } = useWallet();
   const { program } = useAnchor();
   const { toast } = useToast();
   const [imageUrl, setImageUrl] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchMetaData = async () => {
@@ -73,7 +74,8 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         title: "NFT Revealed!",
         description: "You NFT Revealing is Success.",
       });
-      redirect("/reveal");
+
+      setOpen(true);
     } catch (err) {
       console.error("Failed to reveal NFT:", err);
       toast({
@@ -99,8 +101,9 @@ const UnRevealedNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
       >
         Reveal
       </button>
+      <NFTDialog open={open} setOpen={setOpen} />
     </div>
   );
 };
 
-export default UnRevealedNFT;
+export default RevealNFT;

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Wallet } from "lucide-react";
 import WalletConnection from "../solana/wallet-connection";
 
 const links = [
