@@ -7,19 +7,17 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, Keypair, Transaction } from "@solana/web3.js";
 import { openDlgAtom } from "@/atoms/openDlgAtom";
 import {
-  SERVER_ADDRESS,
+  OWNER_PUBLICKEY,
   TOKEN_METADATA_PROGRAM_ID,
   SYSTEM_PROGRAM_ID,
   SPL_TOKEN_PROGRAM_ID,
   MINT_AUTHORITY,
-  COLLECTION_MINT,
-} from "@/config";
+} from "@/config/solana";
 import {
   getMetadata,
   getMasterEdition,
   getAssociatedTokenAddress,
-  getBalances,
-} from "@/lib/solana";
+} from "@/lib/get-pda-address";
 import { useAnchor } from "@/hooks/useAnchor";
 import Loading from "./loading";
 import { useToast } from "@/hooks/use-toast";
@@ -78,7 +76,7 @@ const BuyNFT = ({
         .mintNft(nft_name, nft_uri, real_uri, new anchor.BN(amount))
         .accountsPartial({
           owner: publicKey,
-          recipient: SERVER_ADDRESS,
+          recipient: OWNER_PUBLICKEY,
           destination,
           metadata,
           masterEdition,
@@ -130,9 +128,6 @@ const BuyNFT = ({
       );
 
       console.log("NFT Mint Success!", transactionSignature);
-
-      await getBalances("My Wallet", publicKey);
-      await getBalances("Owner Wallet", SERVER_ADDRESS);
 
       toast({
         description: "NFT Mint Success!",

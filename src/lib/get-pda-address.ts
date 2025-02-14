@@ -38,10 +38,10 @@ export const getAssociatedTokenAddress = (
   return getAssociatedTokenAddressSync(mint, pubKey);
 };
 
-export const getBalances = async (
-  addressName: string,
-  publicKey: anchor.web3.PublicKey
-) => {
-  const balance = await connection.getBalance(publicKey);
-  console.log(`   Balance of ${addressName} => ${balance / LAMPORTS_PER_SOL}`);
-};
+// export const getBalances = async (
+//   addressName: string,
+//   publicKey: anchor.web3.PublicKey
+// ) => {
+//   const balance = await connection.getBalance(publicKey);
+//   console.log(`   Balance of ${addressName} => ${balance / LAMPORTS_PER_SOL}`);
+// };

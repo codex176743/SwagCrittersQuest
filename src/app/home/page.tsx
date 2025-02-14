@@ -1,59 +1,72 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const cards = [
-  {
-    title: "Now Selling",
-    description: "February Swag Drop",
-    path: "/buy",
-    children: "Buy Now",
-  },
-  {
-    title: "Reveal Swag",
-    description: "January Reveal Now Available",
-    path: "/reveal",
-    children: "Reveal Now",
-  },
-  {
-    title: "Redeem",
-    description: "Ready to Ship and Burn?",
-    path: "/redeem",
-    children: "Order Now",
-  },
+const monthArray = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const HomePage = () => {
-  return (
-    <div className="container mx-auto grid lg:grid-cols-3 md:grid-cols-1 justify-items-center gap-10 px-10">
-      {cards.map(({ title, description, path, children }) => (
-        <Card key={title} title={title} description={description} path={path}>
-          {children}
-        </Card>
-      ))}
-    </div>
-  );
-};
+  const [buyMonth, setBuyMonth] = useState<number>(0);
 
-const Card = ({
-  children,
-  title,
-  description,
-  path,
-}: {
-  children: React.ReactNode;
-  title: string;
-  description: string;
-  path: string;
-}) => {
+  useEffect(() => {
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    if (day > 15) {
+      setBuyMonth((currentDate.getMonth() + 1) % 12);
+    } else {
+      setBuyMonth(currentDate.getMonth());
+    }
+  }, []);
+
   return (
-    <div className="flex flex-col justify-between w-[300px] border-[5px] border-black p-5 gap-5 text-center">
-      <p className="font-bold text-[30px]">{title}</p>
-      <p className="font-semibold text-[24px]">{description}</p>
-      <Link
-        className="border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]"
-        href={path}
-      >
-        {children}
-      </Link>
+    <div className="container mx-auto grid lg:grid-cols-9 md:grid-cols-3 justify-items-center gap-32 px-10">
+      <div className="flex flex-col w-full justify-between border-[5px] border-black p-5 gap-10 text-center col-span-3">
+        <p className="font-bold text-[40px]">NOW SELLING</p>
+        <p className="font-semibold text-[35px] px-5">
+          {monthArray[buyMonth] + " Swag Drop"}
+        </p>
+        <Link
+          className="border-[5px] border-black bg-yellow-500 hover:bg-yellow-300 p-2 text-gray-500 font-semibold text-[30px]"
+          href="/buy"
+        >
+          BUY NOW
+        </Link>
+      </div>
+      <div className="flex flex-col w-full justify-between border-[5px] border-black p-5 gap-10 text-center col-span-3">
+        <p className="font-bold text-[40px]">REVEAL SWAG</p>
+        <p className="font-semibold text-[35px]">
+          {monthArray[(buyMonth + 11) % 12] + " Reveal"} <br /> Now Available
+        </p>
+        <Link
+          className="border-[5px] border-black bg-yellow-500 hover:bg-yellow-300 p-2 text-gray-500 font-semibold text-[30px]"
+          href="/reveal"
+        >
+          REVEAL NOW
+        </Link>
+      </div>
+      <div className="flex flex-col w-full justify-between border-[5px] border-black p-5 gap-5 text-center col-span-3">
+        <p className="font-bold text-[40px]">REDEEM</p>
+        <p className="font-semibold text-[35px]">Ready to Ship and Burn?</p>
+        <Link
+          className="border-[5px] border-black bg-yellow-500 hover:bg-yellow-300 p-2 text-gray-500 font-semibold text-[30px]"
+          href="/redeem"
+        >
+          ORDER NOW
+        </Link>
+      </div>
     </div>
   );
 };

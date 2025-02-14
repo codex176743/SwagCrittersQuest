@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import WalletConnection from "../solana/wallet-connection";
+import WalletConnection from "./wallet-connection";
 
 const links = [
   {

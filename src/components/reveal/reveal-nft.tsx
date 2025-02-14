@@ -5,7 +5,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { getMetadata } from "@/lib/solana";
+import { getMetadata } from "@/lib/get-pda-address";
 import { useAnchor } from "@/hooks/useAnchor";
 import {
   COLLECTION_MINT,
