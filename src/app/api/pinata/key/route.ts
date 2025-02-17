@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { pinata } from "@/config/pinata";
+import { pinata } from "@/services/pinata";
 
 export const dynamic = "force-dynamic";
 

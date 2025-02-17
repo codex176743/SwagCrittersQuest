@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/critters_nft_contract.json`.
  */
 export type CrittersNftContract = {
-  "address": "J1cjK26QA4NSLanpZmmDR2sLcy98CMuqiGYC2NCPohGk",
+  "address": "9UcKGVkJZN5QEqcfhzfAMYcnweXtzVFiRWgDQAbwjASw",
   "metadata": {
     "name": "crittersNftContract",
     "version": "0.1.0",
@@ -443,6 +443,39 @@ export type CrittersNftContract = {
           }
         },
         {
+          "name": "collectionState",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
@@ -465,12 +498,24 @@ export type CrittersNftContract = {
           "type": "string"
         },
         {
-          "name": "symbol",
+          "name": "uri",
           "type": "string"
         },
         {
-          "name": "uri",
-          "type": "string"
+          "name": "costAmount",
+          "type": "u64"
+        },
+        {
+          "name": "allowTime",
+          "type": "i64"
+        },
+        {
+          "name": "delayTime",
+          "type": "i64"
+        },
+        {
+          "name": "countLimit",
+          "type": "u32"
         }
       ]
     },
@@ -654,6 +699,39 @@ export type CrittersNftContract = {
           "writable": true
         },
         {
+          "name": "collectionState",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collectionMint"
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
@@ -678,14 +756,6 @@ export type CrittersNftContract = {
         {
           "name": "uri",
           "type": "string"
-        },
-        {
-          "name": "realUri",
-          "type": "string"
-        },
-        {
-          "name": "amount",
-          "type": "u64"
         }
       ]
     },
@@ -742,7 +812,6 @@ export type CrittersNftContract = {
         },
         {
           "name": "revealState",
-          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -770,6 +839,38 @@ export type CrittersNftContract = {
           }
         },
         {
+          "name": "collectionState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collectionMint"
+              }
+            ]
+          }
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         },
@@ -784,8 +885,8 @@ export type CrittersNftContract = {
           "type": "string"
         },
         {
-          "name": "delayTime",
-          "type": "i64"
+          "name": "realUri",
+          "type": "string"
         }
       ]
     },
@@ -862,6 +963,19 @@ export type CrittersNftContract = {
   ],
   "accounts": [
     {
+      "name": "collectionState",
+      "discriminator": [
+        228,
+        135,
+        148,
+        4,
+        244,
+        41,
+        118,
+        165
+      ]
+    },
+    {
       "name": "revealState",
       "discriminator": [
         85,
@@ -885,9 +999,42 @@ export type CrittersNftContract = {
       "code": 6001,
       "name": "burnError",
       "msg": "NFT Burn Failed!"
+    },
+    {
+      "code": 6002,
+      "name": "limitError",
+      "msg": "NFT mint limited!"
     }
   ],
   "types": [
+    {
+      "name": "collectionState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mintCount",
+            "type": "u32"
+          },
+          {
+            "name": "costAmount",
+            "type": "u64"
+          },
+          {
+            "name": "allowTime",
+            "type": "i64"
+          },
+          {
+            "name": "delayTime",
+            "type": "i64"
+          },
+          {
+            "name": "countLimit",
+            "type": "u32"
+          }
+        ]
+      }
+    },
     {
       "name": "revealState",
       "type": {
@@ -898,8 +1045,8 @@ export type CrittersNftContract = {
             "type": "i64"
           },
           {
-            "name": "realUri",
-            "type": "string"
+            "name": "id",
+            "type": "u32"
           }
         ]
       }

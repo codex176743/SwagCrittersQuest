@@ -1,3 +1,8 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
+import { useWallet } from "@solana/wallet-adapter-react";
 import BuyNFT from "@/components/buy/buy-nft";
 import {
   Carousel,
@@ -6,41 +11,35 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
-const cards = [
-  {
-    date: "February 2025",
-    mintedNumber: 500,
-    totalSupply: 2500,
-  },
-  {
-    date: "March 2025",
-    mintedNumber: 400,
-    totalSupply: 2500,
-  },
-  {
-    date: "April 2025",
-    mintedNumber: 300,
-    totalSupply: 2500,
-  },
-  {
-    date: "May 2025",
-    mintedNumber: 200,
-    totalSupply: 2500,
-  },
-  {
-    date: "June 2025",
-    mintedNumber: 100,
-    totalSupply: 2500,
-  },
-  {
-    date: "July 2025",
-    mintedNumber: 100,
-    totalSupply: 2500,
-  },
-];
+import { OWNER_PUBLICKEY } from "@/config/solana";
 
 const BuyPage = () => {
+  const { publicKey } = useWallet();
+  const [collectionNFTs, setCollectionNFTs] =
+    useState<DigitalAssetWithToken[]>();
+
+  useEffect(() => {
+    if (!publicKey) {
+      return;
+    }
+
+    const updateCollectionNFTs = async () => {
+      const response = await fetch(`/api/nft?publickey=${OWNER_PUBLICKEY}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data: DigitalAssetWithToken[] = await response.json();
+      setCollectionNFTs(
+        data.filter((nft) => nft.metadata.symbol == "COLLECTION")
+      );
+    };
+
+    updateCollectionNFTs();
+  }, [publicKey]);
+
   return (
     <Carousel
       opts={{
@@ -49,13 +48,9 @@ const BuyPage = () => {
       className="container mx-auto cursor-grab active:cursor-grabbing"
     >
       <CarouselContent>
-        {cards.map(({ date, mintedNumber, totalSupply }) => (
-          <CarouselItem key={date} className="pl-1 md:basis-1/2 lg:basis-1/3">
-            <BuyNFT
-              date={date}
-              mintedNumber={mintedNumber}
-              totalSupply={totalSupply}
-            />
+        {collectionNFTs?.map((nft, index) => (
+          <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
+            <BuyNFT nft={nft} />
           </CarouselItem>
         ))}
       </CarouselContent>

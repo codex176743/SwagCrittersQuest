@@ -1,8 +1,8 @@
 import * as anchor from "@coral-xyz/anchor";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { TOKEN_METADATA_PROGRAM_ID } from "@/config";
-import { connection } from "@/hooks/useAnchor";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { TOKEN_METADATA_PROGRAM_ID } from "@/config/solana";
+// import { connection } from "@/hooks/useAnchor";
+// import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 export const getMetadata = async (
   mint: anchor.web3.PublicKey

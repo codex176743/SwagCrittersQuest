@@ -6,7 +6,7 @@ import { Program, AnchorProvider, IdlAccounts } from "@coral-xyz/anchor";
 import { Connection } from "@solana/web3.js";
 import idl from "@/anchor/critters_nft_contract.json";
 import { CrittersNftContract } from "@/types/critters_nft_contract";
-import { NETWORK } from "@/config";
+import { NETWORK } from "@/config/solana";
 
 export const connection = new Connection(NETWORK || "devnet", "confirmed");
 

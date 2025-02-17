@@ -8,60 +8,69 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { getMetadata } from "@/lib/get-pda-address";
 import { useAnchor } from "@/hooks/useAnchor";
 import {
-  COLLECTION_MINT,
   MINT_AUTHORITY,
   SYSTEM_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID,
-} from "@/config";
+} from "@/config/solana";
 import { useToast } from "@/hooks/use-toast";
 import NFTDialog from "./nft-dialog";
+import NFTBox from "@/components/NFTBox";
+import { getShopifyID, getProducts } from "@/lib/get-shopify-info";
+import { getFileUrl, getJsonUrl } from "@/lib/get-ipfs-url";
 
 const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { publicKey } = useWallet();
   const { program } = useAnchor();
   const { toast } = useToast();
-  const [imageUrl, setImageUrl] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchMetaData = async () => {
-      try {
-        const response = await fetch(nft.metadata.uri);
-        const data = await response.json();
-        setImageUrl(data.image);
-      } catch (error) {
-        console.log("fetch metadata failed: ", error);
-      }
-    };
-
-    fetchMetaData();
-  }, []);
 
   const handleClick = async () => {
     if (!publicKey) {
       return;
     }
 
-    console.log("Reveal Clicked! Mint Address", nft.mint.publicKey);
-
     setIsLoading(true);
+    const nft_Id = nft.metadata.name.split("#")[1];
+
+    const shopify_Id = await getShopifyID("February 2025", nft_Id);
+    const product = await getProducts("9865255190817");
 
     const mintAddress = new PublicKey(nft.mint.publicKey);
     const mintMetadata = await getMetadata(mintAddress);
+    const collection_mint = new PublicKey(nft.metadata.collection.value.key);
 
-    const nft_name = "Critters";
-    const delay_time = 0;
+    const nft_name = product["title"];
+    const ipfsImageUrl = await getFileUrl(product["image"]["src"]);
+    setName(product["title"]);
+    setImageUrl(product["image"]["src"]);
 
+    const jsonData = {
+      name: nft_name,
+      symbol: "SWAGBOX",
+      description: "This is a Revealed Swag Box.",
+      image: ipfsImageUrl,
+      external_url: "https://swag.critters.quest",
+      attributes: [
+        {
+          trait_type: "Status",
+          value: "Revealed",
+        },
+      ],
+    };
+
+    const ipfsJsonUrl = await getJsonUrl(jsonData);
     try {
       const tx = await program.methods
-        .revealNft(nft_name, new anchor.BN(delay_time))
+        .revealNft(nft_name, ipfsJsonUrl)
         .accountsPartial({
           owner: publicKey,
           mint: mintAddress,
           metadata: mintMetadata,
           updateAuthority: MINT_AUTHORITY,
-          collectionMint: COLLECTION_MINT,
+          collectionMint: collection_mint,
           systemProgram: SYSTEM_PROGRAM_ID,
           tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
         })
@@ -88,21 +97,24 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 bg-black items-center">
-      <img
-        src={imageUrl}
-        alt="unrevealed"
-        className="w-[200px] h-[200px] bg-white"
+    <>
+      <div className="flex flex-col gap-1 items-center">
+        <NFTBox nft={nft} />
+        <button
+          disabled={isLoading}
+          className="bg-yellow-500 p-1 w-full text-gray-500 font-semibold text-[24px] text-center"
+          onClick={() => handleClick()}
+        >
+          {isLoading ? "Revealing..." : "Reveal"}
+        </button>
+      </div>
+      <NFTDialog
+        name={name}
+        imageUrl={imageUrl}
+        open={open}
+        setOpen={setOpen}
       />
-      <button
-        disabled={isLoading}
-        className="bg-yellow-500 p-1 text-gray-500 font-semibold text-[24px] text-center"
-        onClick={() => handleClick()}
-      >
-        Reveal
-      </button>
-      <NFTDialog open={open} setOpen={setOpen} />
-    </div>
+    </>
   );
 };
 

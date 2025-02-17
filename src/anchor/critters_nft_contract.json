@@ -1,5 +1,5 @@
 {
-  "address": "J1cjK26QA4NSLanpZmmDR2sLcy98CMuqiGYC2NCPohGk",
+  "address": "9UcKGVkJZN5QEqcfhzfAMYcnweXtzVFiRWgDQAbwjASw",
   "metadata": {
     "name": "critters_nft_contract",
     "version": "0.1.0",
@@ -437,6 +437,39 @@
           }
         },
         {
+          "name": "collection_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
@@ -459,12 +492,24 @@
           "type": "string"
         },
         {
-          "name": "symbol",
+          "name": "uri",
           "type": "string"
         },
         {
-          "name": "uri",
-          "type": "string"
+          "name": "cost_amount",
+          "type": "u64"
+        },
+        {
+          "name": "allow_time",
+          "type": "i64"
+        },
+        {
+          "name": "delay_time",
+          "type": "i64"
+        },
+        {
+          "name": "count_limit",
+          "type": "u32"
         }
       ]
     },
@@ -648,6 +693,39 @@
           "writable": true
         },
         {
+          "name": "collection_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collection_mint"
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
@@ -672,14 +750,6 @@
         {
           "name": "uri",
           "type": "string"
-        },
-        {
-          "name": "real_uri",
-          "type": "string"
-        },
-        {
-          "name": "amount",
-          "type": "u64"
         }
       ]
     },
@@ -736,7 +806,6 @@
         },
         {
           "name": "reveal_state",
-          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -764,6 +833,38 @@
           }
         },
         {
+          "name": "collection_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collection_mint"
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
@@ -778,8 +879,8 @@
           "type": "string"
         },
         {
-          "name": "delay_time",
-          "type": "i64"
+          "name": "real_uri",
+          "type": "string"
         }
       ]
     },
@@ -856,6 +957,19 @@
   ],
   "accounts": [
     {
+      "name": "CollectionState",
+      "discriminator": [
+        228,
+        135,
+        148,
+        4,
+        244,
+        41,
+        118,
+        165
+      ]
+    },
+    {
       "name": "RevealState",
       "discriminator": [
         85,
@@ -879,9 +993,42 @@
       "code": 6001,
       "name": "BurnError",
       "msg": "NFT Burn Failed!"
+    },
+    {
+      "code": 6002,
+      "name": "LimitError",
+      "msg": "NFT mint limited!"
     }
   ],
   "types": [
+    {
+      "name": "CollectionState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint_count",
+            "type": "u32"
+          },
+          {
+            "name": "cost_amount",
+            "type": "u64"
+          },
+          {
+            "name": "allow_time",
+            "type": "i64"
+          },
+          {
+            "name": "delay_time",
+            "type": "i64"
+          },
+          {
+            "name": "count_limit",
+            "type": "u32"
+          }
+        ]
+      }
+    },
     {
       "name": "RevealState",
       "type": {
@@ -892,8 +1039,8 @@
             "type": "i64"
           },
           {
-            "name": "real_uri",
-            "type": "string"
+            "name": "id",
+            "type": "u32"
           }
         ]
       }

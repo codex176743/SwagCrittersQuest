@@ -11,82 +11,66 @@ import {
   SPL_TOKEN_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID,
   SYSTEM_PROGRAM_ID,
-} from "@/config";
+} from "@/config/solana";
+import NFTBox from "@/components/NFTBox";
+import ShopifyDialog from "./shopify-dialog";
 
 const RedeemNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { publicKey } = useWallet();
   const { program } = useAnchor();
   const { toast } = useToast();
-  const [imageUrl, setImageUrl] = useState<string>();
-
-  useEffect(() => {
-    const fetchMetaData = async () => {
-      try {
-        const response = await fetch(nft.metadata.uri);
-        const data = await response.json();
-        setImageUrl(data.image);
-      } catch (error) {
-        console.log("fetch metadata failed: ", error);
-      }
-    };
-
-    fetchMetaData();
-  }, [publicKey]);
-
-  if (!publicKey) {
-    return;
-  }
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleClick = async () => {
     console.log("Burn & Ship Clicked! Mint Address: ", nft.mint.publicKey);
+    setOpen(true);
 
-    const mint = new PublicKey(nft.mint.publicKey);
-    console.log("\nMint", mint.toBase58());
+    // const mint = new PublicKey(nft.mint.publicKey);
+    // console.log("\nMint", mint.toBase58());
 
-    const tokenAccount = getAssociatedTokenAddressSync(mint, publicKey);
-    console.log("TokenAccount", tokenAccount.toBase58());
+    // const tokenAccount = getAssociatedTokenAddressSync(mint, publicKey);
+    // console.log("TokenAccount", tokenAccount.toBase58());
 
-    try {
-      const tx = await program.methods
-        .burnNft()
-        .accountsPartial({
-          owner: publicKey,
-          mint,
-          tokenAccount,
-          tokenProgram: SPL_TOKEN_PROGRAM_ID,
-          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-          systemProgram: SYSTEM_PROGRAM_ID,
-        })
-        .rpc({
-          skipPreflight: true,
-        });
-      console.log("\nNFT Burned! Your transaction signature", tx);
+    // try {
+    //   const tx = await program.methods
+    //     .burnNft()
+    //     .accountsPartial({
+    //       owner: publicKey,
+    //       mint,
+    //       tokenAccount,
+    //       tokenProgram: SPL_TOKEN_PROGRAM_ID,
+    //       tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+    //       systemProgram: SYSTEM_PROGRAM_ID,
+    //     })
+    //     .rpc({
+    //       skipPreflight: true,
+    //     });
+    //   console.log("\nNFT Burned! Your transaction signature", tx);
 
-      toast({
-        description: "Your NFT is burned!",
-      });
-    } catch (error) {
-      console.log("Failed to burn NFT:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to burn NFT!",
-      });
-    }
+    //   toast({
+    //     description: "Your NFT is burned!",
+    //   });
+    // } catch (error) {
+    //   console.log("Failed to burn NFT:", error);
+    //   toast({
+    //     variant: "destructive",
+    //     description: "Failed to burn NFT!",
+    //   });
+    // }
   };
 
   return (
-    <div className="flex flex-col gap-2 bg-black items-center">
-      <img
-        src={imageUrl}
-        alt="revealed"
-        className="w-[200px] h-[200px] bg-white"
-      />
+    <div className="flex flex-col gap-1 items-center">
+      <NFTBox nft={nft} />
       <button
-        className="bg-yellow-500 p-1 text-gray-500 font-semibold text-[24px] text-center"
-        onClick={handleClick}
+        disabled={isLoading}
+        className="bg-yellow-500 p-1 w-full text-gray-500 font-semibold text-[24px] text-center"
+        onClick={() => handleClick()}
       >
-        Burn & Ship
+        {isLoading ? "Redeeming..." : "Redeem"}
       </button>
+      <ShopifyDialog open={open} setOpen={setOpen} />
     </div>
   );
 };

@@ -1,18 +1,43 @@
-import RevealNFT from "@/components/reveal/reveal-nft";
-import Roulette from "@/components/reveal/roulette";
-import { fetchFiteredNFTs } from "@/lib/get-nft";
+"use client";
 
-const RevealPage = async () => {
-  const collectionMint = "FHyJRmiJqUzLzQtjdy96SUR7KKp5jvWFKVyJkCXZeMy9";
-  const nfts = await fetchFiteredNFTs(collectionMint, "BLACKBOX");
+import { useState, useEffect } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
+import RevealNFT from "@/components/reveal/reveal-nft";
+// import Roulette from "@/components/reveal/roulette";
+
+const RevealPage = () => {
+  const { publicKey } = useWallet();
+  const [unRevealNFTs, setUnRevealNFTs] = useState<DigitalAssetWithToken[]>();
+
+  useEffect(() => {
+    if (!publicKey) {
+      return;
+    }
+
+    const updateCollectionNFTs = async () => {
+      const response = await fetch(`/api/nft?publickey=${publicKey}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data: DigitalAssetWithToken[] = await response.json();
+      setUnRevealNFTs(data.filter((nft) => nft.metadata.symbol == "BLACKBOX"));
+    };
+
+    updateCollectionNFTs();
+  }, [publicKey]);
+
   return (
     <div className="flex flex-col container mx-auto gap-10">
       <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-10 p-10 rounded-[50px] bg-black items-center">
-        {nfts.map((nft, index) => (
+        {unRevealNFTs?.map((nft, index) => (
           <RevealNFT key={index} nft={nft} />
         ))}
       </div>
-      <Roulette />
+      {/* <Roulette /> */}
     </div>
   );
 };

@@ -1,10 +1,12 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, Keypair, Transaction } from "@solana/web3.js";
+import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { openDlgAtom } from "@/atoms/openDlgAtom";
 import {
   OWNER_PUBLICKEY,
@@ -12,6 +14,7 @@ import {
   SYSTEM_PROGRAM_ID,
   SPL_TOKEN_PROGRAM_ID,
   MINT_AUTHORITY,
+  PROGRAM_ID,
 } from "@/config/solana";
 import {
   getMetadata,
@@ -21,45 +24,69 @@ import {
 import { useAnchor } from "@/hooks/useAnchor";
 import Loading from "./loading";
 import { useToast } from "@/hooks/use-toast";
+import { getJsonUrl } from "@/lib/get-ipfs-url";
 
-const BuyNFT = ({
-  date,
-  mintedNumber,
-  totalSupply,
-}: {
-  date: string;
-  mintedNumber: number;
-  totalSupply: number;
-}) => {
+const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { publicKey, signTransaction } = useWallet();
   const { connection } = useConnection();
   const { program } = useAnchor();
   const { toast } = useToast();
   const [_, setOpen] = useAtom(openDlgAtom);
+  const [mintedNumber, setMintedNumber] = useState<number>(0);
+  const [totalNumber, setTotalNumber] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const [collectionPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("collection_state"),
+        new anchor.web3.PublicKey(nft.mint.publicKey).toBuffer(),
+      ],
+      PROGRAM_ID
+    );
+
+    const fetchCollectionState = async () => {
+      const collectionState = await program.account.collectionState.fetch(
+        collectionPDA
+      );
+      setMintedNumber(collectionState.mintCount);
+      setTotalNumber(collectionState.countLimit);
+    };
+
+    fetchCollectionState();
+  }, []);
 
   const handleClick = async () => {
     if (!publicKey || !signTransaction) {
       setOpen(true);
       return;
     }
-    console.log("Date: ", date);
+
     setIsLoading(true);
 
     const mintKeypair = Keypair.generate();
     const mint = mintKeypair.publicKey;
     console.log("\nMint", mint.toBase58());
 
-    const nft_name = "CrittersNFT";
+    const nft_name = nft.metadata.name + " #" + (mintedNumber + 1);
+    const response = await fetch(nft.metadata.uri);
+    const data = await response.json();
+    const jsonData = {
+      name: nft_name,
+      symbol: "BLACKBOX",
+      description: "This is a Blackbox NFT.",
+      image: data.image,
+      external_url: "https://swag.critters.quest",
+      attributes: [
+        {
+          trait_type: "Status",
+          value: "Unevealed",
+        },
+      ],
+    };
 
-    const nft_uri =
-      "https://ipfs.io/ipfs/bafkreiau6cv5uedxy24kug7k4cf4yeluvnszmvyaboemlu4g6eyw7j63jm";
-
-    const real_uri =
-      "https://ipfs.io/ipfs/bafkreigrgg7tmm4kjmkcf37vtlpslsawe7x4d27bsxxh2ykz4b4gkczkou";
-
-    const amount = 0.1 * LAMPORTS_PER_SOL;
-
+    const ipfsJsonUrl = await getJsonUrl(jsonData);
+    const collection_mint = new anchor.web3.PublicKey(nft.mint.publicKey);
     const metadata = await getMetadata(mint);
     console.log("Metadata", metadata.toBase58());
 
@@ -73,28 +100,29 @@ const BuyNFT = ({
 
     transaction.add(
       await program.methods
-        .mintNft(nft_name, nft_uri, real_uri, new anchor.BN(amount))
+        .mintNft(nft_name, ipfsJsonUrl)
         .accountsPartial({
           owner: publicKey,
           recipient: OWNER_PUBLICKEY,
+          mint,
           destination,
           metadata,
           masterEdition,
-          mint,
           mintAuthority: MINT_AUTHORITY,
-          collectionMint: COLLECTION_MINT,
+          collectionMint: collection_mint,
           systemProgram: SYSTEM_PROGRAM_ID,
           tokenProgram: SPL_TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
         })
         .signers([mintKeypair])
         .transaction()
     );
 
-    const collectionMetadata = await getMetadata(COLLECTION_MINT);
+    const collectionMetadata = await getMetadata(collection_mint);
     console.log("Collection Metadata", collectionMetadata.toBase58());
 
-    const collectionMasterEdition = await getMasterEdition(COLLECTION_MINT);
+    const collectionMasterEdition = await getMasterEdition(collection_mint);
     console.log(
       "Collection Master Edition",
       collectionMasterEdition.toBase58()
@@ -107,7 +135,7 @@ const BuyNFT = ({
           metadata,
           mint,
           mintAuthority: MINT_AUTHORITY,
-          collectionMint: COLLECTION_MINT,
+          collectionMint: collection_mint,
           collectionMetadata,
           collectionMasterEdition,
           systemProgram: SYSTEM_PROGRAM_ID,
@@ -148,20 +176,20 @@ const BuyNFT = ({
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="flex flex-col justify-between w-[300px] border-[5px] border-black p-5 gap-3 text-center">
+        <div className="flex flex-col justify-between w-[350px] border-[5px] border-black p-5 gap-3 text-center">
           <div className="flex flex-col">
-            <p className="font-bold text-[30px]">{date}</p>
-            <p className="text-[30px]">Swag Drop</p>
+            <p className="font-bold text-[40px]">{nft.metadata.name}</p>
+            <p className="text-[40px]">Swag Drop</p>
           </div>
           <div className="flex flex-col">
-            <p className="font-semibold text-[24px]">Total Minted</p>
+            <p className="font-semibold text-[35px]">Total Minted</p>
             <p className="text-[24px]">
-              {mintedNumber}/{totalSupply}
+              {mintedNumber}/{totalNumber}
             </p>
           </div>
           <button
             disabled={isLoading}
-            className={`border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[24px]`}
+            className={`border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[30px]`}
             onClick={() => handleClick()}
           >
             BUY NOW

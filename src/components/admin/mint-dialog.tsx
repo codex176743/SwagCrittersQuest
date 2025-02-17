@@ -2,11 +2,12 @@
 
 import { useState, ChangeEvent } from "react";
 import { ImageUp } from "lucide-react";
+import * as anchor from "@coral-xyz/anchor";
 import {
   getAssociatedTokenAddressSync,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { Keypair, Transaction } from "@solana/web3.js";
+import { Keypair, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { getMetadata, getMasterEdition } from "@/lib/get-pda-address";
 import {
   MINT_AUTHORITY,
@@ -104,6 +105,10 @@ const MintDialog = () => {
       };
 
       const ipfsJsonUrl = await getJsonUrl(jsonData);
+      const amount = 0.3 * LAMPORTS_PER_SOL;
+      const allow_time = 0;
+      const delay_time = 0;
+      const count_limit = 3;
 
       const collectionKeypair = Keypair.generate();
       const collectionMint = collectionKeypair.publicKey;
@@ -128,7 +133,14 @@ const MintDialog = () => {
       const transaction = new Transaction();
       transaction.add(
         await program.methods
-          .createCollection(name, symbol, ipfsJsonUrl)
+          .createCollection(
+            name,
+            ipfsJsonUrl,
+            new anchor.BN(amount),
+            new anchor.BN(allow_time),
+            new anchor.BN(delay_time),
+            count_limit
+          )
           .accountsPartial({
             user: OWNER_PUBLICKEY,
             mint: collectionMint,

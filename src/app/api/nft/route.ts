@@ -5,7 +5,6 @@ import {
 } from "@metaplex-foundation/mpl-token-metadata";
 import { publicKey } from "@metaplex-foundation/umi";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
-import { NETWORK } from "@/config/solana";
 import { clusterApiUrl } from "@solana/web3.js";
 
 BigInt.prototype.toJSON = function () {
