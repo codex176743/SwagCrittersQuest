@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import * as anchor from "@coral-xyz/anchor";
+import { useState } from "react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -36,7 +35,7 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     const nft_Id = nft.metadata.name.split("#")[1];
 
     const shopify_Id = await getShopifyID("February 2025", nft_Id);
-    const product = await getProducts("9865255190817");
+    const product = await getProducts(shopify_Id);
 
     const mintAddress = new PublicKey(nft.mint.publicKey);
     const mintMetadata = await getMetadata(mintAddress);

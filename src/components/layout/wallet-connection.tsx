@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { openDlgAtom } from "@/atoms/openDlgAtom";
+import { walletConnected } from "@/atoms/walletConnectedAtom";
 
 const WalletConnection = () => {
   const { select, wallets, publicKey, disconnect } = useWallet();
-  const [open, setOpen] = useAtom(openDlgAtom);
+  const [open, setOpen] = useAtom(walletConnected);
 
   const handleWalletSelect = async (walletName: any) => {
     if (walletName) {

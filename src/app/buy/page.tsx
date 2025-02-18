@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
-import { useWallet } from "@solana/wallet-adapter-react";
 import BuyNFT from "@/components/buy/buy-nft";
 import {
   Carousel,
@@ -14,15 +13,10 @@ import {
 import { OWNER_PUBLICKEY } from "@/config/solana";
 
 const BuyPage = () => {
-  const { publicKey } = useWallet();
   const [collectionNFTs, setCollectionNFTs] =
     useState<DigitalAssetWithToken[]>();
 
   useEffect(() => {
-    if (!publicKey) {
-      return;
-    }
-
     const updateCollectionNFTs = async () => {
       const response = await fetch(`/api/nft?publickey=${OWNER_PUBLICKEY}`, {
         method: "GET",
@@ -38,7 +32,7 @@ const BuyPage = () => {
     };
 
     updateCollectionNFTs();
-  }, [publicKey]);
+  }, []);
 
   return (
     <Carousel

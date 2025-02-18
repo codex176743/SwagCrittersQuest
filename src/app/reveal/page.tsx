@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import RevealNFT from "@/components/reveal/reveal-nft";
+import { MINT_AUTHORITY } from "@/config/solana";
 // import Roulette from "@/components/reveal/roulette";
 
 const RevealPage = () => {
@@ -24,11 +25,27 @@ const RevealPage = () => {
       });
 
       const data: DigitalAssetWithToken[] = await response.json();
-      setUnRevealNFTs(data.filter((nft) => nft.metadata.symbol == "BLACKBOX"));
+      console.log(data);
+      setUnRevealNFTs(
+        data.filter(
+          (nft) =>
+            nft.metadata.collection.value.verified &&
+            nft.metadata.symbol == "BLACKBOX" &&
+            nft.metadata.updateAuthority == MINT_AUTHORITY.toString()
+        )
+      );
     };
 
     updateCollectionNFTs();
   }, [publicKey]);
+
+  if (!publicKey) {
+    return (
+      <div className="flex justify-center text-[30px] font-semibold">
+        Please connect your wallet...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col container mx-auto gap-10">

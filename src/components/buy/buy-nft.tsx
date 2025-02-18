@@ -4,10 +4,10 @@ import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL, Keypair, Transaction } from "@solana/web3.js";
+import { Keypair, Transaction } from "@solana/web3.js";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { openDlgAtom } from "@/atoms/openDlgAtom";
+import { walletConnected } from "@/atoms/walletConnectedAtom";
 import {
   OWNER_PUBLICKEY,
   TOKEN_METADATA_PROGRAM_ID,
@@ -22,7 +22,6 @@ import {
   getAssociatedTokenAddress,
 } from "@/lib/get-pda-address";
 import { useAnchor } from "@/hooks/useAnchor";
-import Loading from "./loading";
 import { useToast } from "@/hooks/use-toast";
 import { getJsonUrl } from "@/lib/get-ipfs-url";
 
@@ -31,7 +30,7 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { connection } = useConnection();
   const { program } = useAnchor();
   const { toast } = useToast();
-  const [_, setOpen] = useAtom(openDlgAtom);
+  const [_, setOpen] = useAtom(walletConnected);
   const [mintedNumber, setMintedNumber] = useState<number>(0);
   const [totalNumber, setTotalNumber] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -155,16 +154,16 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         signedTransaction.serialize()
       );
 
-      console.log("NFT Mint Success!", transactionSignature);
+      console.log("Buying NFT Success!", transactionSignature);
 
       toast({
-        description: "NFT Mint Success!",
+        description: "Buying NFT Success!",
       });
     } catch (error) {
-      console.log("Failed to NFT mint!\n", error);
+      console.log("Failed to buy NFT!\n", error);
       toast({
         variant: "destructive",
-        description: "Failed to NFT mint!",
+        description: "Failed to buy NFT!",
       });
     } finally {
       setIsLoading(false);
@@ -173,29 +172,25 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
 
   return (
     <div className="flex items-center justify-center">
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <div className="flex flex-col justify-between w-[350px] border-[5px] border-black p-5 gap-3 text-center">
-          <div className="flex flex-col">
-            <p className="font-bold text-[40px]">{nft.metadata.name}</p>
-            <p className="text-[40px]">Swag Drop</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold text-[35px]">Total Minted</p>
-            <p className="text-[24px]">
-              {mintedNumber}/{totalNumber}
-            </p>
-          </div>
-          <button
-            disabled={isLoading}
-            className={`border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[30px]`}
-            onClick={() => handleClick()}
-          >
-            BUY NOW
-          </button>
+      <div className="flex flex-col justify-between w-[350px] border-[5px] border-black p-5 gap-3 text-center">
+        <div className="flex flex-col">
+          <p className="font-bold text-[40px]">{nft.metadata.name}</p>
+          <p className="text-[40px]">Swag Drop</p>
         </div>
-      )}
+        <div className="flex flex-col">
+          <p className="font-semibold text-[35px]">Total Minted</p>
+          <p className="text-[30px] font-semibold">
+            {mintedNumber + " / " + totalNumber}
+          </p>
+        </div>
+        <button
+          disabled={isLoading}
+          className={`border-[5px] border-black bg-yellow-500 p-2 text-gray-500 font-semibold text-[30px] disabled:bg-yellow-300`}
+          onClick={() => handleClick()}
+        >
+          {isLoading ? "BUYING..." : "BUY NOW"}
+        </button>
+      </div>
     </div>
   );
 };

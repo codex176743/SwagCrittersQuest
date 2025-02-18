@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import RedeemNFT from "@/components/redeem/redeem-nft";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { MINT_AUTHORITY } from "@/config/solana";
 
 const RedeemPage = () => {
   const { publicKey } = useWallet();
@@ -23,11 +24,26 @@ const RedeemPage = () => {
       });
 
       const data: DigitalAssetWithToken[] = await response.json();
-      setRevealNFTs(data.filter((nft) => nft.metadata.symbol == "SWAGBOX"));
+      setRevealNFTs(
+        data.filter(
+          (nft) =>
+            nft.metadata.collection.value.verified &&
+            nft.metadata.symbol == "SWAGBOX" &&
+            nft.metadata.updateAuthority == MINT_AUTHORITY.toString()
+        )
+      );
     };
 
     updateCollectionNFTs();
   }, [publicKey]);
+
+  if (!publicKey) {
+    return (
+      <div className="flex justify-center text-[30px] font-semibold">
+        Please connect your wallet...
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto">
