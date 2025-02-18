@@ -5,6 +5,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import MintDialog from "@/components/admin/mint-dialog";
 import CollectionNFT from "@/components/admin/collection-nft";
+import { OWNER_PUBLICKEY } from "@/config/solana";
+import { redirect } from "next/navigation";
 
 const Admin = () => {
   const { publicKey } = useWallet();

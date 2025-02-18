@@ -1,7 +1,11 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
-import { ImageUp } from "lucide-react";
+import { useState, ChangeEvent, useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon, ImageUp } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import * as anchor from "@coral-xyz/anchor";
 import {
   getAssociatedTokenAddressSync,
@@ -16,16 +20,30 @@ import {
   TOKEN_METADATA_PROGRAM_ID,
   SPL_TOKEN_PROGRAM_ID,
 } from "@/config/solana";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getFileUrl, getJsonUrl } from "@/lib/get-ipfs-url";
@@ -34,24 +52,43 @@ import { useAnchor } from "@/hooks/useAnchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 // import { pinata } from "@/config/pinata";
 
+const FormSchema = z.object({
+  nft_name: z
+    .string()
+    .min(2, { message: "at the least 2 characters required" }),
+  description: z.string().optional(),
+  allow_day: z.date({
+    required_error: "A Mint allow day is required.",
+  }),
+  delay_time: z.number(),
+  cost_amount: z.number(),
+  count_limit: z.number(),
+});
+
 const MintDialog = () => {
   const { program } = useAnchor();
   const { publicKey, signTransaction } = useWallet();
   const { connection } = useConnection();
   const { toast } = useToast();
 
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("/images/unrevealed.jpg");
   const [isloading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      nft_name: "",
+      description: "",
+      allow_day: new Date(),
+      delay_time: 7,
+      cost_amount: 1,
+      count_limit: 2500,
+    },
+  });
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setImageFile(file || null);
-    setError("");
 
     if (file) {
       const reader = new FileReader();
@@ -62,18 +99,12 @@ const MintDialog = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     if (!publicKey || !signTransaction) {
       return;
     }
 
-    if (!imageFile) {
-      setError("Please input a collection image.");
-      return;
-    }
-
     setIsLoading(true);
-    setOpen(false);
 
     try {
       // Pinata Client Side Setup
@@ -85,11 +116,12 @@ const MintDialog = () => {
 
       // Pinata Server Side Setup
       const ipfsImageUrl = await getFileUrl(imageUrl);
+      const name = data.nft_name;
       const symbol = "COLLECTION";
       const jsonData = {
-        name,
+        name: name,
         symbol,
-        description,
+        description: data.description,
         seller_fee_basis_points: 500,
         external_url: "https://swag.critters.quest",
         image: ipfsImageUrl,
@@ -103,27 +135,22 @@ const MintDialog = () => {
         },
         attributes: [],
       };
-
       const ipfsJsonUrl = await getJsonUrl(jsonData);
-      const amount = 0.3 * LAMPORTS_PER_SOL;
-      const allow_time = 0;
-      const delay_time = 0;
-      const count_limit = 3;
-
+      const amount = data.cost_amount * LAMPORTS_PER_SOL;
+      const unixTimestamp =
+        Math.floor(data.allow_day.getTime() / 1000) + 86400 * data.delay_time;
+      const allow_time = parseInt(unixTimestamp.toString(16), 16);
+      const delay_time = parseInt((86400 * data.delay_time).toString(16), 16);
       const collectionKeypair = Keypair.generate();
       const collectionMint = collectionKeypair.publicKey;
-
       console.log("\nCollection Mint Key: ", collectionMint.toBase58());
-
       const metadata = await getMetadata(collectionMint);
       console.log("Collection Metadata Account: ", metadata.toBase58());
-
       const masterEdition = await getMasterEdition(collectionMint);
       console.log(
         "Collection Master Edition Account: ",
         masterEdition.toBase58()
       );
-
       const destination = getAssociatedTokenAddressSync(
         collectionMint,
         OWNER_PUBLICKEY
@@ -139,7 +166,7 @@ const MintDialog = () => {
             new anchor.BN(amount),
             new anchor.BN(allow_time),
             new anchor.BN(delay_time),
-            count_limit
+            data.count_limit
           )
           .accountsPartial({
             user: OWNER_PUBLICKEY,
@@ -156,7 +183,6 @@ const MintDialog = () => {
           .signers([collectionKeypair])
           .transaction()
       );
-
       const recentBlockhash = await connection.getLatestBlockhash();
       transaction.recentBlockhash = recentBlockhash.blockhash;
       transaction.feePayer = OWNER_PUBLICKEY;
@@ -170,6 +196,7 @@ const MintDialog = () => {
         toast({
           description: "Collection NFT minted",
         });
+        setOpen(false);
       } catch (err) {
         console.error("Failed to create collection NFT:", err);
         toast({
@@ -192,74 +219,187 @@ const MintDialog = () => {
             disabled={isloading}
             className="p-2 font-semibold bg-yellow-500 hover:bg-yellow-300"
           >
-            {isloading ? "Minting..." : "Create a new Collection"}
+            Create a new Collection
           </button>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>New Collection</DialogTitle>
-          <DialogDescription>
-            Please input a new collection NFT informations.
-          </DialogDescription>
-        </DialogHeader>
-        {error && <p className="text-red-600 text-center">{error}</p>}
-        <div className="flex justify-center items-center pb-5">
-          <Label
-            htmlFor="image-file"
-            className="relative rounded-[20px] border overflow-hidden cursor-pointer"
-          >
-            <img
-              src={imageUrl}
-              className="h-[150px] w-[150px]"
-              alt="collection_image"
-            />
-            <div className="absolute flex flex-col inset-0 items-center justify-center opacity-0 hover:opacity-60 bg-black">
-              <ImageUp className="h-16 w-16 text-white" />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <DialogHeader>
+              <DialogTitle>New Collection</DialogTitle>
+              <DialogDescription>
+                Please input a new collection NFT informations.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-center items-center pb-5">
+              <Label
+                htmlFor="image"
+                className="relative rounded-[20px] border overflow-hidden cursor-pointer"
+              >
+                <img
+                  src={imageUrl}
+                  className="h-[150px] w-[150px]"
+                  alt="image"
+                />
+                <div className="absolute flex flex-col inset-0 items-center justify-center opacity-0 hover:opacity-60 bg-black">
+                  <ImageUp className="h-16 w-16 text-white" />
+                </div>
+              </Label>
+              <Input
+                id="image"
+                onChange={handleImageChange}
+                type="file"
+                className="hidden"
+              />
             </div>
-          </Label>
-          <Input
-            id="image-file"
-            onChange={handleImageChange}
-            type="file"
-            required={true}
-            className="hidden"
-          />
-        </div>
-        <div className="grid gap-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name<span className="text-red-600">*</span>
-            </Label>
-            <Input
-              id="name"
-              value={name}
-              placeholder="Input a NFT name..."
-              maxLength={20}
-              required={true}
-              autoFocus
-              onChange={(e) => setName(e.target.value)}
-              className="col-span-3"
+            <FormField
+              control={form.control}
+              name="nft_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Collection Name<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="February 2025" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right">
-              Description
-            </Label>
-            <Input
-              id="description"
-              value={description}
-              placeholder="Input a NFT description..."
-              maxLength={50}
-              required={true}
-              onChange={(e) => setDescription(e.target.value)}
-              className="col-span-3"
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input placeholder="This is a collection..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        </div>
-        <DialogFooter className="py-5">
-          <Button onClick={handleSubmit}>Mint</Button>
-        </DialogFooter>
+            <div className="flex flex-row gap-5">
+              <FormField
+                control={form.control}
+                name="allow_day"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>
+                      Allow Mint Day<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Popover modal>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-[240px] pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="delay_time"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>
+                      Delay Day(day)<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="7"
+                        type="number"
+                        {...field}
+                        onChange={(e) => {
+                          // Convert the input value to a number
+                          field.onChange(e.target.valueAsNumber);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-row gap-5">
+              <FormField
+                control={form.control}
+                name="cost_amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Cost Amount(SOL)<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="3"
+                        type="number"
+                        {...field}
+                        onChange={(e) => {
+                          // Convert the input value to a number
+                          field.onChange(e.target.valueAsNumber);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="count_limit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Mint Limit<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="2500"
+                        type="number"
+                        {...field}
+                        onChange={(e) => {
+                          // Convert the input value to a number
+                          field.onChange(e.target.valueAsNumber);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Button type="submit" disabled={isloading} className="w-full">
+              {isloading ? "Minting..." : "Mint"}
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
