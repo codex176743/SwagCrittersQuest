@@ -1,17 +1,48 @@
 "use client";
 
 import React, { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Country, CountryDropdown } from "@/components/ui/country-dropdown";
+
+const FormSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
+  firstName: z
+    .string()
+    .min(2, { message: "at the least 2 characters required" }),
+  lastName: z
+    .string()
+    .min(2, { message: "at the least 2 characters required" }),
+  country: z.string({
+    required_error: "Please select a country",
+  }),
+  address: z.string(),
+  address_2: z.string().optional(),
+  city: z.string(),
+  state: z.string(),
+  zipCode: z.string(),
+  // phoneNumber: z.string(),
+});
 
 const ShopifyDialog = ({
   open,
@@ -20,111 +51,178 @@ const ShopifyDialog = ({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      country: "United States",
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    console.log("data", data);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Shipping Address</DialogTitle>
-          <DialogDescription>
-            Before redeeming your products, please set your shipping address.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="email" className="text-right">
-            Email
-          </Label>
-          <Input
-            id="email"
-            value={email}
-            required={true}
-            onChange={(e) => setEmail(e.target.value)}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="firstName" className="text-right">
-            FirstName
-          </Label>
-          <Input
-            id="firstName"
-            value={firstName}
-            required={true}
-            onChange={(e) => setFirstName(e.target.value)}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="lastname" className="text-right">
-            LastName
-          </Label>
-          <Input
-            id="lastname"
-            value={lastName}
-            required={true}
-            onChange={(e) => setLastName(e.target.value)}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="address" className="text-right">
-            Address
-          </Label>
-          <Input
-            id="address"
-            value={address}
-            required={true}
-            onChange={(e) => setAddress(e.target.value)}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="city" className="text-right">
-            City
-          </Label>
-          <Input
-            id="city"
-            value={city}
-            required={true}
-            onChange={(e) => setCity(e.target.value)}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="country" className="text-right">
-            Country
-          </Label>
-          <Input
-            id="country"
-            value={country}
-            required={true}
-            onChange={(e) => setCountry(e.target.value)}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="zipcode" className="text-right">
-            ZipCode
-          </Label>
-          <Input
-            id="zipcode"
-            value={zipCode}
-            required={true}
-            onChange={(e) => setZipCode(e.target.value)}
-            className="col-span-3"
-          />
-        </div>
-
-        <DialogFooter>
-          <Button>Redeem</Button>
-        </DialogFooter>
+      <DialogContent className="sm:max-w-[500px]">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            <DialogHeader>
+              <DialogTitle>Shipping Address</DialogTitle>
+              <DialogDescription>
+                Before redeeming your products, please set your shipping
+                address.
+              </DialogDescription>
+            </DialogHeader>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Email<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="John@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      First Name<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="First Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Last Name<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Last Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Country<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <CountryDropdown
+                    placeholder="Please select a country"
+                    defaultValue={field.value}
+                    onChange={(country) => {
+                      field.onChange(country.name);
+                    }}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Address<span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address_2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address Line 2</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Apartment, suite, etc. (optional)"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-9 gap-2">
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem className="col-span-3">
+                    <FormLabel>
+                      Last Name<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Last Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem className="col-span-3">
+                    <FormLabel>
+                      Last Name<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Last Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem className="col-span-3">
+                    <FormLabel>
+                      Last Name<span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Last Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Redeem
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
