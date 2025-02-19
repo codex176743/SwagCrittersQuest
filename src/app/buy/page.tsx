@@ -26,6 +26,7 @@ const BuyPage = () => {
       });
 
       const data: DigitalAssetWithToken[] = await response.json();
+      console.log(data);
       setCollectionNFTs(
         data.filter((nft) => nft.metadata.symbol == "COLLECTION")
       );

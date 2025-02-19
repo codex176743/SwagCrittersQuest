@@ -35,7 +35,7 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     const nft_Id = nft.metadata.name.split("#")[1];
 
     const shopify_Id = await getShopifyID("February 2025", nft_Id);
-    const product = await getProducts(shopify_Id);
+    const product = await getProducts("9865255190817");
 
     const mintAddress = new PublicKey(nft.mint.publicKey);
     const mintMetadata = await getMetadata(mintAddress);

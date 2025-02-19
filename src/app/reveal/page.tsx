@@ -25,7 +25,6 @@ const RevealPage = () => {
       });
 
       const data: DigitalAssetWithToken[] = await response.json();
-      console.log(data);
       setUnRevealNFTs(
         data.filter(
           (nft) =>
