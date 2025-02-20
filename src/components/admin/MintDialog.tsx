@@ -155,7 +155,6 @@ const MintDialog = () => {
         OWNER_PUBLICKEY
       );
       console.log("Destination ATA: ", destination.toBase58());
-      console.log(name, symbol, ipfsJsonUrl);
       const transaction = new Transaction();
       transaction.add(
         await program.methods

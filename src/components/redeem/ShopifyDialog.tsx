@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import * as anchor from "@coral-xyz/anchor";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Enum, PublicKey } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { useAnchor } from "@/hooks/useAnchor";
 import { useToast } from "@/hooks/use-toast";
-import { getProducts, createOrder } from "@/lib/shopify-api";
+import { getShopifyID, getProducts, createOrder } from "@/lib/shopify-api";
 import {
   SPL_TOKEN_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID,
@@ -26,7 +25,6 @@ import { Separator } from "@/components/ui/separator";
 import type { ShippingAddressType } from "@/types/shipping-address";
 import ShippingAddressCotent from "./ShippingAddressContent";
 import RedeemProductContent from "./RedeemProductContent";
-import { set } from "date-fns";
 
 enum Status {
   IDLE = "IDLE",
@@ -63,16 +61,12 @@ const ShopifyDialog = ({
 
   useEffect(() => {
     const fetchProductInfo = async () => {
-      const [RevealPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("reveal_state"),
-          new PublicKey(nft.mint.publicKey).toBuffer(),
-        ],
-        program.programId
+      const [collectionName, nftID] = nft.metadata.name.split("#");
+      const shopify_Id = await getShopifyID(
+        collectionName.trim(),
+        nftID.trim()
       );
-      const reveal_state = await program.account.revealState.fetch(RevealPDA);
-      // setProductID(reveal_state.productID);
-      const product = await getProducts("9873747247393");
+      const product = await getProducts(shopify_Id);
       setProductInfo(product);
     };
 

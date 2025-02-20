@@ -35,12 +35,10 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
 
     try {
       const [collectionName, nftID] = nft.metadata.name.split("#");
-      console.log(collectionName, nftID);
       const shopify_Id = await getShopifyID(
         collectionName.trim(),
         nftID.trim()
       );
-      console.log(shopify_Id);
       const product = await getProducts(shopify_Id);
 
       const mintAddress = new PublicKey(nft.mint.publicKey);
