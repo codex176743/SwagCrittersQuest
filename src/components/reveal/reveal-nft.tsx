@@ -101,7 +101,7 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         <NFTBox nft={nft} />
         <button
           disabled={isLoading}
-          className="bg-yellow-500 p-1 w-full text-gray-500 font-semibold text-[24px] text-center"
+          className="bg-yellow-500 px-5 py-1 text-gray-500 font-semibold text-[24px] text-center"
           onClick={() => handleClick()}
         >
           {isLoading ? "Revealing..." : "Reveal"}
