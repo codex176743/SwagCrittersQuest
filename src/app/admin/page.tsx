@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
-import MintDialog from "@/components/admin/mint-dialog";
-import CollectionNFT from "@/components/admin/collection-nft";
+import MintDialog from "@/components/admin/MintDialog";
+import CollectionNFT from "@/components/admin/CollectionNFT";
 import { OWNER_PUBLICKEY } from "@/config/solana";
 import { redirect } from "next/navigation";
 
@@ -12,6 +12,10 @@ const Admin = () => {
   const { publicKey } = useWallet();
   const [collectionNFTs, setCollectionNFTs] =
     useState<DigitalAssetWithToken[]>();
+
+  if (!publicKey || publicKey?.toString() != OWNER_PUBLICKEY.toString()) {
+    redirect("/home");
+  }
 
   useEffect(() => {
     if (!publicKey) {
@@ -34,6 +38,14 @@ const Admin = () => {
 
     updateCollectionNFTs();
   }, [publicKey]);
+
+  if (!collectionNFTs || collectionNFTs?.length === 0) {
+    return (
+      <div className="flex justify-center text-[50px] font-semibold">
+        No Collection NFTs...
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto">

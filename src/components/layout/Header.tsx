@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import WalletConnection from "./wallet-connection";
+import WalletConnection from "./WalletConnection";
+import { OWNER_PUBLICKEY } from "@/config/solana";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const links = [
   {
@@ -25,6 +27,7 @@ const links = [
 
 const Header = () => {
   const pathname = usePathname();
+  const { publicKey } = useWallet();
 
   return (
     <div className="flex flex-col container mx-auto space-y-10 mb-10">
@@ -33,6 +36,18 @@ const Header = () => {
           <img src="/images/logo.png" alt="Logo" width={120} />
         </Link>
         <div className="hidden md:flex flex-row gap-10 bg-yellow-800 h-full items-center p-5">
+          {publicKey?.toString() == OWNER_PUBLICKEY.toString() && (
+            <div className="text-[24px] text-white font-semibold">
+              <Link
+                className={
+                  pathname.startsWith("/admin") ? "active underline" : ""
+                }
+                href={"/admin"}
+              >
+                Admin
+              </Link>
+            </div>
+          )}
           {links.map(({ title, path }) => (
             <div key={title} className="text-[24px] text-white font-semibold">
               <Link

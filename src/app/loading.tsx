@@ -1,4 +1,8 @@
 export default function Loading() {
   // Or a custom loading skeleton component
-  return <p className="text-[50px]">Loading...</p>;
+  return (
+    <div className="flex justify-center text-[50px] font-semibold">
+      Loading...
+    </div>
+  );
 }

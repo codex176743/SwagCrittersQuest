@@ -24,7 +24,7 @@ const NFTBox = ({ nft }: { nft: DigitalAssetWithToken }) => {
     <div className="flex border-2 w-[200px] border-white items-center">
       <img
         src={imageUrl}
-        alt="NFTBox"
+        alt="NFT Image"
         className="w-[200px] h-[200px] bg-white"
       />
     </div>

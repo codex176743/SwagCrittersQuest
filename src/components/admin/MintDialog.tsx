@@ -137,8 +137,7 @@ const MintDialog = () => {
       };
       const ipfsJsonUrl = await getJsonUrl(jsonData);
       const amount = data.cost_amount * LAMPORTS_PER_SOL;
-      const unixTimestamp =
-        Math.floor(data.allow_day.getTime() / 1000) + 86400 * data.delay_time;
+      const unixTimestamp = Math.floor(data.allow_day.getTime() / 1000);
       const allow_time = parseInt(unixTimestamp.toString(16), 16);
       const delay_time = parseInt((86400 * data.delay_time).toString(16), 16);
       const collectionKeypair = Keypair.generate();

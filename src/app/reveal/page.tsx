@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
-import RevealNFT from "@/components/reveal/reveal-nft";
+import RevealNFT from "@/components/reveal/RevealNFT";
 import { MINT_AUTHORITY } from "@/config/solana";
-// import Roulette from "@/components/reveal/roulette";
+// import Roulette from "@/components/reveal/Roulette";
 
 const RevealPage = () => {
   const { publicKey } = useWallet();
@@ -40,8 +40,16 @@ const RevealPage = () => {
 
   if (!publicKey) {
     return (
-      <div className="flex justify-center text-[30px] font-semibold">
+      <div className="flex justify-center text-[50px] font-semibold">
         Please connect your wallet...
+      </div>
+    );
+  }
+
+  if (!unRevealNFTs || unRevealNFTs.length === 0) {
+    return (
+      <div className="flex justify-center text-[50px] font-semibold">
+        No NFTs to reveal...
       </div>
     );
   }

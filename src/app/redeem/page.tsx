@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
-import RedeemNFT from "@/components/redeem/redeem-nft";
+import RedeemNFT from "@/components/redeem/RedeemNFT";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { MINT_AUTHORITY } from "@/config/solana";
 
@@ -39,8 +39,16 @@ const RedeemPage = () => {
 
   if (!publicKey) {
     return (
-      <div className="flex justify-center text-[30px] font-semibold">
+      <div className="flex justify-center text-[50px] font-semibold">
         Please connect your wallet...
+      </div>
+    );
+  }
+
+  if (!RevealNFTs || RevealNFTs.length === 0) {
+    return (
+      <div className="flex justify-center text-[50px] font-semibold">
+        No NFTs to redeem...
       </div>
     );
   }

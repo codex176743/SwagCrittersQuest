@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
-import BuyNFT from "@/components/buy/buy-nft";
+import BuyNFT from "@/components/buy/BuyNFT";
 import {
   Carousel,
   CarouselContent,

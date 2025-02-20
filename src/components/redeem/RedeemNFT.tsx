@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import NFTBox from "@/components/NFTBox";
-import ShopifyDialog from "./shopify-dialog";
+import ShopifyDialog from "./ShopifyDialog";
 
 const RedeemNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const [open, setOpen] = useState<boolean>(false);

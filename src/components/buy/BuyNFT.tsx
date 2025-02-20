@@ -174,7 +174,7 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     <div className="flex items-center justify-center">
       <div className="flex flex-col justify-between w-[350px] border-[5px] border-black p-5 gap-3 text-center">
         <div className="flex flex-col">
-          <p className="font-bold text-[40px]">{nft.metadata.name}</p>
+          <p className="font-bold text-[35px]">{nft.metadata.name}</p>
           <p className="text-[40px]">Swag Drop</p>
         </div>
         <div className="flex flex-col">
