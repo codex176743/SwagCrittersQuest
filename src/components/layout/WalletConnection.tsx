@@ -41,12 +41,14 @@ const WalletConnection = () => {
           {!publicKey ? (
             <button className="flex flex-col p-1 border-[3px] border-black rounded-md bg-yellow-500 items-center">
               <Wallet fill="black" />
-              <span className="text-[10px] font-semibold">CONNECT</span>
+              <span className="text-[10px] w-[40px] font-semibold">
+                CONNECT
+              </span>
             </button>
           ) : (
             <button className="flex flex-col p-1 border-[3px] border-black rounded-md bg-yellow-500 items-center">
               <Wallet fill="black" />
-              <span className=" truncate w-[50px] text-[10px] font-semibold">
+              <span className=" truncate w-[40px] text-[10px] font-semibold">
                 {publicKey.toBase58()}
               </span>
             </button>
