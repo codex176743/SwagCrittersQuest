@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/critters_nft_contract.json`.
  */
 export type CrittersNftContract = {
-  "address": "9UcKGVkJZN5QEqcfhzfAMYcnweXtzVFiRWgDQAbwjASw",
+  "address": "693oZCqhUfwZLAT4PoZ4Ka5ZAVUTuKWutJmQzfmWBtSL",
   "metadata": {
     "name": "crittersNftContract",
     "version": "0.1.0",
@@ -13,166 +13,6 @@ export type CrittersNftContract = {
     "description": "Created with Anchor"
   },
   "instructions": [
-    {
-      "name": "burnMetadata",
-      "discriminator": [
-        164,
-        3,
-        247,
-        68,
-        220,
-        22,
-        109,
-        102
-      ],
-      "accounts": [
-        {
-          "name": "owner",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "mint",
-          "writable": true
-        },
-        {
-          "name": "tokenAccount",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "owner"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
-          "name": "mintAuthority",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  117,
-                  116,
-                  104,
-                  111,
-                  114,
-                  105,
-                  116,
-                  121
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "metadata",
-          "writable": true
-        },
-        {
-          "name": "masterEdition",
-          "writable": true
-        },
-        {
-          "name": "collectionMetadata",
-          "writable": true
-        },
-        {
-          "name": "tokenProgram",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-        },
-        {
-          "name": "tokenMetadataProgram",
-          "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
     {
       "name": "burnNft",
       "discriminator": [
@@ -812,6 +652,7 @@ export type CrittersNftContract = {
         },
         {
           "name": "revealState",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -886,6 +727,10 @@ export type CrittersNftContract = {
         },
         {
           "name": "realUri",
+          "type": "string"
+        },
+        {
+          "name": "shopifyId",
           "type": "string"
         }
       ]
@@ -1045,8 +890,8 @@ export type CrittersNftContract = {
             "type": "i64"
           },
           {
-            "name": "id",
-            "type": "u32"
+            "name": "productId",
+            "type": "string"
           }
         ]
       }

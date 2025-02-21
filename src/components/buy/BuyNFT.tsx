@@ -34,16 +34,15 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const [mintedNumber, setMintedNumber] = useState<number>(0);
   const [totalNumber, setTotalNumber] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [collectionPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("collection_state"),
+      new anchor.web3.PublicKey(nft.mint.publicKey).toBuffer(),
+    ],
+    PROGRAM_ID
+  );
 
   useEffect(() => {
-    const [collectionPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("collection_state"),
-        new anchor.web3.PublicKey(nft.mint.publicKey).toBuffer(),
-      ],
-      PROGRAM_ID
-    );
-
     const fetchCollectionState = async () => {
       const collectionState = await program.account.collectionState.fetch(
         collectionPDA
@@ -67,7 +66,20 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     const mint = mintKeypair.publicKey;
     console.log("\nMint", mint.toBase58());
 
-    const nft_name = nft.metadata.name + " #" + (mintedNumber + 1);
+    const collectionState = await program.account.collectionState.fetch(
+      collectionPDA
+    );
+
+    if (collectionState.mintCount >= collectionState.countLimit) {
+      toast({
+        variant: "destructive",
+        description: "Sold Out!",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const nft_name = nft.metadata.name + " #" + (collectionState.mintCount + 1);
     const response = await fetch(nft.metadata.uri);
     const data = await response.json();
     const jsonData = {
@@ -159,13 +171,13 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
       toast({
         description: "Buying NFT Success!",
       });
+      setIsLoading(false);
     } catch (error) {
       console.log("Failed to buy NFT!\n", error);
       toast({
         variant: "destructive",
         description: "Failed to buy NFT!",
       });
-    } finally {
       setIsLoading(false);
     }
   };

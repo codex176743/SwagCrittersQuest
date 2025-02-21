@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import * as anchor from "@coral-xyz/anchor";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -34,17 +35,46 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     setIsLoading(true);
 
     try {
+      const collection_mint = new PublicKey(nft.metadata.collection.value.key);
+
+      const [RevealPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("reveal_state"),
+          new PublicKey(nft.mint.publicKey).toBuffer(),
+        ],
+        program.programId
+      );
+      const revealState = await program.account.revealState.fetch(RevealPDA);
+
+      const [collectionPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("collection_state"), collection_mint.toBuffer()],
+        program.programId
+      );
+      const collectionState = await program.account.collectionState.fetch(
+        collectionPDA
+      );
+
+      const currentTime = Math.floor(new Date().getTime() / 1000);
+      const mintTime = revealState.mintTime.toNumber();
+      const allowTime = collectionState.allowTime.toNumber();
+      const delayTime = collectionState.delayTime.toNumber();
+
+      if (currentTime < allowTime || currentTime < mintTime + delayTime) {
+        toast({
+          variant: "destructive",
+          description: "Reveal Time is not reached yet!",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const [collectionName, nftID] = nft.metadata.name.split("#");
       const shopify_Id = await getShopifyID(
         collectionName.trim(),
         nftID.trim()
       );
+
       const product = await getProducts(shopify_Id);
-
-      const mintAddress = new PublicKey(nft.mint.publicKey);
-      const mintMetadata = await getMetadata(mintAddress);
-      const collection_mint = new PublicKey(nft.metadata.collection.value.key);
-
       const nft_name = product["title"];
       const ipfsImageUrl = await getFileUrl(product["image"]["src"]);
       setName(product["title"]);
@@ -63,11 +93,14 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
           },
         ],
       };
-
       const ipfsJsonUrl = await getJsonUrl(jsonData);
+
+      const mintAddress = new PublicKey(nft.mint.publicKey);
+      const mintMetadata = await getMetadata(mintAddress);
+
       try {
         const tx = await program.methods
-          .revealNft(nft_name, ipfsJsonUrl)
+          .revealNft(nft_name, ipfsJsonUrl, shopify_Id)
           .accountsPartial({
             owner: publicKey,
             mint: mintAddress,

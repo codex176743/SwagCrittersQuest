@@ -39,14 +39,6 @@ const Admin = () => {
     updateCollectionNFTs();
   }, [publicKey]);
 
-  if (!collectionNFTs || collectionNFTs?.length === 0) {
-    return (
-      <div className="flex justify-center text-[50px] font-semibold">
-        No Collection NFTs...
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto">
       <div className="flex flex-col rounded-[50px] bg-black px-20 py-5 gap-5">

@@ -60,9 +60,9 @@ const FormSchema = z.object({
   allow_day: z.date({
     required_error: "A Mint allow day is required.",
   }),
-  delay_time: z.number(),
-  cost_amount: z.number(),
-  count_limit: z.number(),
+  delay_time: z.number().min(0).max(15),
+  cost_amount: z.number().min(0),
+  count_limit: z.number().min(0).max(2500),
 });
 
 const MintDialog = () => {
@@ -71,7 +71,7 @@ const MintDialog = () => {
   const { connection } = useConnection();
   const { toast } = useToast();
 
-  const [imageUrl, setImageUrl] = useState<string>("/images/unrevealed.jpg");
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [isloading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -101,6 +101,15 @@ const MintDialog = () => {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     if (!publicKey || !signTransaction) {
+      return;
+    }
+
+    if (!imageUrl) {
+      toast({
+        variant: "destructive",
+        description: "Please select an image",
+      });
+
       return;
     }
 
@@ -137,9 +146,8 @@ const MintDialog = () => {
       };
       const ipfsJsonUrl = await getJsonUrl(jsonData);
       const amount = data.cost_amount * LAMPORTS_PER_SOL;
-      const unixTimestamp = Math.floor(data.allow_day.getTime() / 1000);
-      const allow_time = parseInt(unixTimestamp.toString(16), 16);
-      const delay_time = parseInt((86400 * data.delay_time).toString(16), 16);
+      const allow_time = Math.floor(data.allow_day.getTime() / 1000);
+      const delay_time = 86400 * data.delay_time;
       const collectionKeypair = Keypair.generate();
       const collectionMint = collectionKeypair.publicKey;
       console.log("\nCollection Mint Key: ", collectionMint.toBase58());
@@ -223,7 +231,7 @@ const MintDialog = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <DialogHeader>
               <DialogTitle>New Collection</DialogTitle>
               <DialogDescription>
@@ -236,7 +244,7 @@ const MintDialog = () => {
                 className="relative rounded-[20px] border overflow-hidden cursor-pointer"
               >
                 <img
-                  src={imageUrl}
+                  src={imageUrl ? imageUrl : "/images/unrevealed.jpg"}
                   className="h-[150px] w-[150px]"
                   alt="image"
                 />

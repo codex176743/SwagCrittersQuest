@@ -7,7 +7,7 @@ export const SOLANA_RPC_URL = "https://api.devnet.solana.com";
 export const NETWORK = clusterApiUrl("devnet");
 
 export const PROGRAM_ID = new PublicKey(
-  "9UcKGVkJZN5QEqcfhzfAMYcnweXtzVFiRWgDQAbwjASw"
+  "693oZCqhUfwZLAT4PoZ4Ka5ZAVUTuKWutJmQzfmWBtSL"
 );
 
 export const TOKEN_METADATA_PROGRAM_ID = new PublicKey(

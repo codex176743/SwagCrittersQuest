@@ -46,7 +46,7 @@ const RevealPage = () => {
     );
   }
 
-  if (!unRevealNFTs || unRevealNFTs.length === 0) {
+  if (!unRevealNFTs || unRevealNFTs.length == 0) {
     return (
       <div className="flex justify-center text-[50px] font-semibold">
         No NFTs to reveal...

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import * as anchor from "@coral-xyz/anchor";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { useAnchor } from "@/hooks/useAnchor";
 import { useToast } from "@/hooks/use-toast";
-import { getShopifyID, getProducts, createOrder } from "@/lib/shopify-api";
+import { getProducts, createOrder } from "@/lib/shopify-api";
 import {
   SPL_TOKEN_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID,
@@ -61,12 +62,15 @@ const ShopifyDialog = ({
 
   useEffect(() => {
     const fetchProductInfo = async () => {
-      const [collectionName, nftID] = nft.metadata.name.split("#");
-      const shopify_Id = await getShopifyID(
-        collectionName.trim(),
-        nftID.trim()
+      const [RevealPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("reveal_state"),
+          new PublicKey(nft.mint.publicKey).toBuffer(),
+        ],
+        program.programId
       );
-      const product = await getProducts(shopify_Id);
+      const revealState = await program.account.revealState.fetch(RevealPDA);
+      const product = await getProducts(revealState.productId);
       setProductInfo(product);
     };
 
