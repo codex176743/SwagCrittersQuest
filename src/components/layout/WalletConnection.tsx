@@ -23,6 +23,7 @@ const WalletConnection = () => {
       try {
         select(walletName);
         setOpen(false);
+        console.log("wallet connected: ", walletName);
       } catch (error) {
         console.log("wallet connection error: ", error);
       }
