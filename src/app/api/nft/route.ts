@@ -6,7 +6,12 @@ import {
 import { publicKey } from "@metaplex-foundation/umi";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { clusterApiUrl } from "@solana/web3.js";
-import { boolean } from "zod";
+
+declare global {
+  interface BigInt {
+    toJSON(): string;
+  }
+}
 
 BigInt.prototype.toJSON = function () {
   return this.toString();

@@ -25,12 +25,18 @@ const RedeemPage = () => {
 
       const data: DigitalAssetWithToken[] = await response.json();
       setRevealNFTs(
-        data.filter(
-          (nft) =>
-            nft.metadata.collection.value.verified &&
-            nft.metadata.symbol == "SWAGBOX" &&
-            nft.metadata.updateAuthority == MINT_AUTHORITY.toString()
-        )
+        data.filter((nft) => {
+          // Check if the collection exists and is verified
+          const isCollectionVerified =
+            nft.metadata.collection.__option === "Some" && // Check if the Option is Some
+            nft.metadata.collection.value.verified; // Access the value if it exists
+
+          return (
+            isCollectionVerified &&
+            nft.metadata.symbol === "SWAGBOX" &&
+            nft.metadata.updateAuthority === MINT_AUTHORITY.toString()
+          );
+        })
       );
     };
 

@@ -35,7 +35,10 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     setIsLoading(true);
 
     try {
-      const collection_mint = new PublicKey(nft.metadata.collection.value.key);
+      const collectionKey =
+        nft.metadata.collection.__option === "Some" && // Check if the Option is Some
+        nft.metadata.collection.value.key; // Access the value if it exists
+      const collection_mint = new PublicKey(collectionKey);
 
       const [RevealPDA] = anchor.web3.PublicKey.findProgramAddressSync(
         [
