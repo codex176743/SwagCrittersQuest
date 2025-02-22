@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "no publickey" }, { status: 500 });
   }
 
-  const umi = createUmi(clusterApiUrl("devnet"));
+  const umi = createUmi(clusterApiUrl("mainnet-beta"));
   umi.use(mplTokenMetadata());
 
   // The owner's public key

@@ -8,7 +8,10 @@ import idl from "@/anchor/critters_nft_contract.json";
 import { CrittersNftContract } from "@/types/critters_nft_contract";
 import { NETWORK } from "@/config/solana";
 
-export const connection = new Connection(NETWORK || "devnet", "confirmed");
+export const connection = new Connection(
+  NETWORK || "mainnet-beta",
+  "confirmed"
+);
 
 export const useAnchor = () => {
   const wallet = useWallet();

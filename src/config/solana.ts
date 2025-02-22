@@ -2,9 +2,9 @@ import * as anchor from "@coral-xyz/anchor";
 import { PublicKey, clusterApiUrl, SystemProgram } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-export const SOLANA_RPC_URL = "https://api.devnet.solana.com";
+export const SOLANA_RPC_URL = "https://api.mainnet-beta.solana.com";
 
-export const NETWORK = clusterApiUrl("devnet");
+export const NETWORK = clusterApiUrl("mainnet-beta");
 
 export const PROGRAM_ID = new PublicKey(
   "693oZCqhUfwZLAT4PoZ4Ka5ZAVUTuKWutJmQzfmWBtSL"
