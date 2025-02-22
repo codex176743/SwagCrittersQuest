@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import WalletConnection from "./WalletConnection";
 import { OWNER_PUBLICKEY } from "@/config/solana";
@@ -25,12 +24,6 @@ const links = [
     path: "/redeem",
   },
 ];
-
-const WalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
 
 const Header = () => {
   const pathname = usePathname();
@@ -68,7 +61,6 @@ const Header = () => {
         </div>
         <div className="flex flex-row justify-between space-x-10">
           <WalletConnection />
-          <WalletMultiButtonDynamic className="btn-ghost btn-sm relative flex md:hidden text-lg " />
           <button className="px-10 bg-yellow-800 text-[20px] text-white font-semibold">
             SWAG STORE
           </button>

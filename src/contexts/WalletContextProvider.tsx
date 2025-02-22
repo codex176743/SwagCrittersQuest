@@ -1,70 +1,38 @@
 "use client";
 
-import { WalletAdapterNetwork, WalletError } from "@solana/wallet-adapter-base";
+import React, { useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
-import { FC, ReactNode, useCallback, useMemo } from "react";
-import { AutoConnectProvider, useAutoConnect } from "./AutoConnectProvider";
-import {
-  NetworkConfigurationProvider,
-  useNetworkConfiguration,
-} from "./NetworkConfigurationProvider";
-import dynamic from "next/dynamic";
-import { useToast } from "@/hooks/use-toast";
+import { SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 
-const ReactUIWalletModalProviderDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletModalProvider,
-  { ssr: false }
-);
+// Default styles that can be overridden by your app
+require("@solana/wallet-adapter-react-ui/styles.css");
 
-const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { autoConnect } = useAutoConnect();
-  const { networkConfiguration } = useNetworkConfiguration();
-  const network = networkConfiguration as WalletAdapterNetwork;
+export default function WalletContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const network = WalletAdapterNetwork.Devnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const { toast } = useToast();
-
-  console.log(network);
-
-  const wallets = useMemo(() => [new SolflareWalletAdapter()], [network]);
-
-  const onError = useCallback((error: WalletError) => {
-    toast({
-      title: "Wallet Error",
-      description: error.message,
-    });
-    console.error(error);
-  }, []);
+  const wallets = useMemo(
+    () => [
+      // manually add any legacy wallet adapters here
+      new SolflareWalletAdapter(),
+    ],
+    [network]
+  );
 
   return (
-    // TODO: updates needed for updating and referencing endpoint: wallet adapter rework
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider
-        wallets={wallets}
-        onError={onError}
-        autoConnect={autoConnect}
-      >
-        <ReactUIWalletModalProviderDynamic>
-          {children}
-        </ReactUIWalletModalProviderDynamic>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
-};
-
-export const ContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  return (
-    <>
-      <NetworkConfigurationProvider>
-        <AutoConnectProvider>
-          <WalletContextProvider>{children}</WalletContextProvider>
-        </AutoConnectProvider>
-      </NetworkConfigurationProvider>
-    </>
-  );
-};
+}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
-import { ContextProvider } from "@/contexts/WalletContextProvider";
+import WalletContextProvider from "@/contexts/WalletContextProvider";
 import { UILayout } from "@/components/layout/UiLayout";
 import "./globals.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
@@ -31,9 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ContextProvider>
+        <WalletContextProvider>
           <UILayout>{children}</UILayout>
-        </ContextProvider>
+        </WalletContextProvider>
         <Toaster />
       </body>
     </html>
