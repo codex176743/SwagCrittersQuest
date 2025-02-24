@@ -52,7 +52,30 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     };
 
     fetchCollectionState();
-  }, []);
+
+    const subscriptionId = connection.onAccountChange(
+      // The address of the account we want to watch
+      collectionPDA,
+      // Callback for when the account changes
+      (accountInfo) => {
+        try {
+          const decodedData = program.coder.accounts.decode(
+            "collectionState",
+            accountInfo.data
+          );
+          setMintedNumber(decodedData.mintCount);
+          setTotalNumber(decodedData.countLimit);
+        } catch (error) {
+          console.error("Error decoding account data:", error);
+        }
+      }
+    );
+
+    return () => {
+      // Unsubscribe from account change
+      connection.removeAccountChangeListener(subscriptionId);
+    };
+  }, [collectionPDA, connection, program]);
 
   const handleClick = async () => {
     if (!publicKey || !signTransaction) {
