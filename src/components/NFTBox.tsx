@@ -5,10 +5,10 @@ import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 
 const NFTBox = ({
   nft,
-  setOpen,
+  setIsDetail,
 }: {
   nft: DigitalAssetWithToken;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDetail?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [imageUrl, setImageUrl] = useState<string>();
 
@@ -29,7 +29,7 @@ const NFTBox = ({
   return (
     <div
       className="flex border-2 w-[200px] border-white items-center hover:cursor-pointer"
-      onClick={() => setOpen(true)}
+      onClick={() => setIsDetail && setIsDetail(true)}
     >
       <img
         src={imageUrl}

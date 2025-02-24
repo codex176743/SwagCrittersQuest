@@ -34,6 +34,14 @@ const BuyPage = () => {
     updateCollectionNFTs();
   }, []);
 
+  if (!collectionNFTs || collectionNFTs.length === 0) {
+    return (
+      <div className="flex justify-center text-[50px] font-semibold">
+        No NFTs to buy...
+      </div>
+    );
+  }
+
   return (
     <Carousel
       opts={{

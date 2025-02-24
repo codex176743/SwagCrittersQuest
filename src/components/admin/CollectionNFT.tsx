@@ -6,12 +6,12 @@ import NFTBox from "@/components/NFTBox";
 import CollectionDialog from "./CollectionDialog";
 
 const CollectionNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [isDetail, setIsDetail] = useState<boolean>(false);
 
   return (
     <>
-      <NFTBox nft={nft} setOpen={setOpen} />
-      <CollectionDialog nft={nft} open={open} setOpen={setOpen} />
+      <NFTBox nft={nft} setIsDetail={setIsDetail} />
+      <CollectionDialog nft={nft} open={isDetail} setOpen={setIsDetail} />
     </>
   );
 };
