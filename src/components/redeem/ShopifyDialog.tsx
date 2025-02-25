@@ -41,16 +41,19 @@ const ShopifyDialog = ({
   nft,
   open,
   setOpen,
+  variantID,
+  setVariantID,
 }: {
   nft: DigitalAssetWithToken;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  variantID: string | undefined;
+  setVariantID: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) => {
   const { publicKey } = useWallet();
   const { program } = useAnchor();
   const { toast } = useToast();
   const [status, setStatus] = useState<Status>(Status.IDLE);
-  const [variantID, setVariantID] = useState<string>("");
   const [shippingAddress, setShippingAddress] = useState<ShippingAddressType>();
   const [productInfo, setProductInfo] = useState<any>();
   const [nextPage, setNextPage] = useState<boolean>(false);
@@ -78,9 +81,23 @@ const ShopifyDialog = ({
   }, []);
 
   const handleSubmit = async () => {
-    if (!shippingAddress || !variantID) {
+    if (!shippingAddress) {
+      toast({
+        variant: "destructive",
+        description: "Please fill shipping address!",
+      });
       return;
     }
+
+    if (!variantID) {
+      toast({
+        variant: "destructive",
+        description: "Please select one variant!",
+      });
+      return;
+    }
+
+    console.log(variantID);
 
     // Burn NFT
     if (status == Status.IDLE) {

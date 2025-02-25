@@ -30,37 +30,32 @@ const RedeemProductContent = ({
   setVariantID,
 }: {
   productInfo: any;
-  setVariantID: React.Dispatch<React.SetStateAction<string>>;
+  setVariantID: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) => {
-  const variants = productInfo.variants.map((variant: any) => variant.title);
   const [imageUrl, setImageUrl] = useState<string>(productInfo.image.src);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      variant: variants[0],
-    },
   });
 
   // Watch the selected variant
-  const selectedVariant = form.watch("variant");
+  const selectedVariant = productInfo.options.map((option: any) =>
+    form.watch(option.name)
+  );
 
   // Update imageUrl when selectedVariant changes
   useEffect(() => {
     if (selectedVariant) {
+      const title = selectedVariant.join(" / ");
       const selectedVariantInfo = productInfo.variants.find(
-        (variant: any) => variant.title === selectedVariant
+        (variant: any) => variant.title === title
       );
       if (selectedVariantInfo) {
         const selectedImage = productInfo.images.find(
           (image: any) => image.id === selectedVariantInfo.image_id
         );
         setVariantID(selectedVariantInfo.id);
-        if (selectedVariant == "Default Title") {
-          setImageUrl(productInfo.image.src);
-        } else {
-          setImageUrl(selectedImage.src);
-        }
+        setImageUrl(selectedImage.src);
       }
     }
   }, [selectedVariant]);
@@ -78,38 +73,39 @@ const RedeemProductContent = ({
         <DialogTitle>PRODUCTS</DialogTitle>
         <div className="flex flex-col gap-1">
           <p className="text-[15px] font-semibold">{productInfo.title}</p>
-          <FormField
-            control={form.control}
-            name="variant"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>{productInfo.options[0].name}</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex flex-row space-x-1"
-                  >
-                    {variants.map((variant: any, index: number) => (
-                      <FormItem
-                        key={index}
-                        className="flex items-center space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <RadioGroupItem value={variant} />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          {variant.toUpperCase()}
-                        </FormLabel>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-                <FormDescription>Choose one what you want.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {productInfo.options.map((option: any, index: number) => (
+            <FormField
+              key={index}
+              control={form.control}
+              name={option.name}
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>{option.name}</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-row space-x-1"
+                    >
+                      {option.values.map((value: any, index: number) => (
+                        <FormItem
+                          key={index}
+                          className="flex items-center space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <RadioGroupItem value={value} />
+                          </FormControl>
+                          <FormLabel className="font-normal">{value}</FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+          <FormDescription>Choose one variant what you want.</FormDescription>
           <div className="flex">
             <img src={imageUrl} className="border w-[150px] h-[150px]" />
           </div>
