@@ -67,6 +67,8 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
           setTotalNumber(decodedData.countLimit);
         } catch (error) {
           console.error("Error decoding account data:", error);
+        } finally {
+          setIsLoading(false);
         }
       }
     );
@@ -194,7 +196,6 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
       toast({
         description: "Buying NFT Success!",
       });
-      setIsLoading(false);
     } catch (error) {
       console.log("Failed to buy NFT!\n", error);
       toast({

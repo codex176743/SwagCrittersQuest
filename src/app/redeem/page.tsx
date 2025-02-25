@@ -21,6 +21,7 @@ const RedeemPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        cache: "no-cache",
       });
 
       const data: DigitalAssetWithToken[] = await response.json();
@@ -46,7 +47,7 @@ const RedeemPage = () => {
   if (!publicKey) {
     return (
       <div className="flex justify-center text-[50px] font-semibold">
-        Please connect your wallet...
+        Coming Soon...
       </div>
     );
   }
