@@ -890,6 +890,10 @@ export type CrittersNftContract = {
             "type": "i64"
           },
           {
+            "name": "nftId",
+            "type": "u32"
+          },
+          {
             "name": "productId",
             "type": "string"
           }

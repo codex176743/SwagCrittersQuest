@@ -104,7 +104,7 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
       return;
     }
 
-    const nft_name = nft.metadata.name + " #" + (collectionState.mintCount + 1);
+    const nft_name = nft.metadata.name;
     const response = await fetch(nft.metadata.uri);
     const data = await response.json();
     const jsonData = {

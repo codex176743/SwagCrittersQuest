@@ -2,7 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { PublicKey, clusterApiUrl, SystemProgram } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-export const SOLANA_RPC_URL = "https://api.devnet.solana.com";
+export const SOLANA_RPC_URL = process.env.SOLANA_RPC_URL;
 
 export const NETWORK = clusterApiUrl("devnet");
 
@@ -19,7 +19,7 @@ export const SYSTEM_PROGRAM_ID = SystemProgram.programId;
 export const SPL_TOKEN_PROGRAM_ID = TOKEN_PROGRAM_ID;
 
 export const MINT_AUTHORITY = anchor.web3.PublicKey.findProgramAddressSync(
-  [Buffer.from("authority")],
+  [Buffer.from(process.env.AUTHORRITY_SEED || "")],
   PROGRAM_ID
 )[0];
 

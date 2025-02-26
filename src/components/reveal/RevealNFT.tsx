@@ -60,7 +60,7 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
       const currentTime = Math.floor(new Date().getTime() / 1000);
       const mintTime = revealState.mintTime.toNumber();
       const allowTime = collectionState.allowTime.toNumber();
-      const delayTime = collectionState.delayTime.toNumber();
+      const delayTime = collectionState.delayTime.toNumber() - 43200;
 
       if (currentTime < allowTime || currentTime < mintTime + delayTime) {
         toast({
@@ -71,7 +71,9 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         return;
       }
 
-      const [collectionName, nftID] = nft.metadata.name.split("#");
+      // const [collectionName, nftID] = nft.metadata.name.split("#");
+      const collectionName = nft.metadata.name;
+      const nftID = revealState.nftId.toString();
       const shopify_Id = await getShopifyID(
         collectionName.trim(),
         nftID.trim()
