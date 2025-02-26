@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "no publickey" }, { status: 500 });
   }
 
-  const umi = createUmi(NETWORK);
+  const umi = createUmi(process.env.SOLANA_RPC_URL || NETWORK);
   umi.use(mplTokenMetadata());
 
   // The owner's public key

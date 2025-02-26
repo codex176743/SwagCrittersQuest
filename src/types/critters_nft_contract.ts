@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/critters_nft_contract.json`.
  */
 export type CrittersNftContract = {
-  "address": "693oZCqhUfwZLAT4PoZ4Ka5ZAVUTuKWutJmQzfmWBtSL",
+  "address": "3orYKxtvWmb9QS58fzr4G1FGr6pygKCVbGdVQweHr6Q9",
   "metadata": {
     "name": "crittersNftContract",
     "version": "0.1.0",

@@ -6,9 +6,12 @@ import { Program, AnchorProvider, IdlAccounts } from "@coral-xyz/anchor";
 import { Connection } from "@solana/web3.js";
 import idl from "@/anchor/critters_nft_contract.json";
 import { CrittersNftContract } from "@/types/critters_nft_contract";
-import { NETWORK } from "@/config/solana";
+import { SOLANA_RPC_URL } from "@/config/solana";
 
-export const connection = new Connection(NETWORK || "devnet", "confirmed");
+export const connection = new Connection(
+  process.env.SOLANA_RPC_URL || SOLANA_RPC_URL,
+  "confirmed"
+);
 
 export const useAnchor = () => {
   const wallet = useWallet();
