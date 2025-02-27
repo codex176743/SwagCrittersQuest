@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/src/data
-/src/config
+# Ignore all files in src/config
+src/config/*
