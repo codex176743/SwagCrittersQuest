@@ -1,9 +1,9 @@
 "use client";
 
-import { useAtom } from "jotai";
 import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Wallet } from "lucide-react";
+import { useWalletOpen } from "@/hooks/useWalletOpen";
 import {
   Dialog,
   DialogContent,
@@ -12,11 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { walletConnected } from "@/atoms/walletConnectedAtom";
 
 const WalletConnection = () => {
   const { select, wallets, publicKey, disconnect } = useWallet();
-  const [open, setOpen] = useAtom(walletConnected);
+  const { open, setOpen } = useWalletOpen();
 
   const handleWalletSelect = async (walletName: any) => {
     if (walletName) {

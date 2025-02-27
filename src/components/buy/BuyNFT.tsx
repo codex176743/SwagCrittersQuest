@@ -1,13 +1,11 @@
 "use client";
 
-import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Keypair, Transaction } from "@solana/web3.js";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { walletConnected } from "@/atoms/walletConnectedAtom";
 import {
   OWNER_PUBLICKEY,
   TOKEN_METADATA_PROGRAM_ID,
@@ -23,6 +21,7 @@ import {
 } from "@/lib/get-pda-address";
 import { useAnchor } from "@/hooks/useAnchor";
 import { useToast } from "@/hooks/use-toast";
+import { useWalletOpen } from "@/hooks/useWalletOpen";
 import { getJsonUrl } from "@/lib/get-ipfs-url";
 
 const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
@@ -30,7 +29,7 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
   const { connection } = useConnection();
   const { program } = useAnchor();
   const { toast } = useToast();
-  const [_, setOpen] = useAtom(walletConnected);
+  const { setOpen } = useWalletOpen();
   const [mintedNumber, setMintedNumber] = useState<number>(0);
   const [totalNumber, setTotalNumber] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
