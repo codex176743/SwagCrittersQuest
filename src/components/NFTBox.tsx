@@ -24,7 +24,7 @@ const NFTBox = ({
     };
 
     fetchMetaData();
-  }, []);
+  }, [nft]);
 
   return (
     <div

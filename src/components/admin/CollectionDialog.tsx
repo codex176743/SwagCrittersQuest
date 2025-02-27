@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useAnchor } from "@/hooks/useAnchor";
 import { useToast } from "@/hooks/use-toast";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
@@ -35,6 +35,7 @@ const CollectionDialog = ({
 }) => {
   const { program } = useAnchor();
   const { publicKey } = useWallet();
+  const { connection } = useConnection();
   const { toast } = useToast();
   const [description, setDescription] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>();
@@ -44,6 +45,13 @@ const CollectionDialog = ({
   const [totalNumber, setTotalNumber] = useState<number>(0);
   const [cost, setCost] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [collectionPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("collection_state"),
+      new anchor.web3.PublicKey(nft.mint.publicKey).toBuffer(),
+    ],
+    PROGRAM_ID
+  );
 
   useEffect(() => {
     const fetchMetaData = async () => {
@@ -56,14 +64,6 @@ const CollectionDialog = ({
         console.log("fetch metadata failed: ", error);
       }
     };
-
-    const [collectionPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("collection_state"),
-        new anchor.web3.PublicKey(nft.mint.publicKey).toBuffer(),
-      ],
-      PROGRAM_ID
-    );
 
     const fetchCollectionState = async () => {
       const collectionState = await program.account.collectionState.fetch(
@@ -80,6 +80,30 @@ const CollectionDialog = ({
     fetchCollectionState();
   }, []);
 
+  useEffect(() => {
+    const subscriptionId = connection.onAccountChange(
+      // The address of the account we want to watch
+      collectionPDA,
+      // Callback for when the account changes
+      (accountInfo) => {
+        try {
+          const decodedData = program.coder.accounts.decode(
+            "collectionState",
+            accountInfo.data
+          );
+          setMintedNumber(decodedData.mintCount);
+        } catch (error) {
+          console.error("Error decoding account data:", error);
+        }
+      }
+    );
+
+    return () => {
+      // Unsubscribe from account change
+      connection.removeAccountChangeListener(subscriptionId);
+    };
+  }, [collectionPDA, program, connection]);
+
   const handleSubmit = async () => {
     if (!publicKey) {
       return;
@@ -88,9 +112,7 @@ const CollectionDialog = ({
     setIsLoading(true);
 
     const mint = new PublicKey(nft.mint.publicKey);
-    console.log("\nMint", mint.toBase58());
     const tokenAccount = getAssociatedTokenAddressSync(mint, publicKey);
-    console.log("TokenAccount", tokenAccount.toBase58());
 
     try {
       const tx = await program.methods

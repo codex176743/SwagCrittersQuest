@@ -5,7 +5,7 @@ import {
 } from "@metaplex-foundation/mpl-token-metadata";
 import { publicKey } from "@metaplex-foundation/umi";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
-import { NETWORK } from "@/config/solana";
+import { SOLANA_RPC_URL } from "@/config/solana";
 
 declare global {
   interface BigInt {
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "no publickey" }, { status: 500 });
   }
 
-  const umi = createUmi(process.env.SOLANA_RPC_URL || NETWORK);
+  const umi = createUmi(SOLANA_RPC_URL);
   umi.use(mplTokenMetadata());
 
   // The owner's public key

@@ -1,8 +1,20 @@
 import * as anchor from "@coral-xyz/anchor";
-import { PublicKey, clusterApiUrl, SystemProgram } from "@solana/web3.js";
+import {
+  PublicKey,
+  clusterApiUrl,
+  SystemProgram,
+  Connection,
+} from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-export const SOLANA_RPC_URL = "https://api.devnet.solana.com";
+// export const SOLANA_RPC_URL = "https://api.devnet.solana.com";
+
+export const SOLANA_RPC_URL =
+  "https://flashy-wiser-hexagon.solana-devnet.quiknode.pro/b686380ffb1dd25517d89d9eb9bbcbbe4092ce5f";
+
+export const connection = new Connection(SOLANA_RPC_URL, "confirmed");
+
+export const connection_1 = new Connection(SOLANA_RPC_URL, "processed");
 
 export const NETWORK = clusterApiUrl("devnet");
 

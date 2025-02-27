@@ -33,7 +33,6 @@ enum Status {
   WAITING = "WAITING FOR CONFIRMATION",
   CONFIRMED = "TRANSACTION CONFIRMED",
   ORDERING = "CREATING ORDER",
-  SUCCESS = "ORDER CREATED",
   ERROR = "ERROR",
 }
 
@@ -78,7 +77,7 @@ const ShopifyDialog = ({
     };
 
     fetchProductInfo();
-  }, []);
+  }, [nft]);
 
   const handleSubmit = async () => {
     if (!shippingAddress) {
@@ -97,15 +96,11 @@ const ShopifyDialog = ({
       return;
     }
 
-    console.log(variantID);
-
     // Burn NFT
     if (status == Status.IDLE) {
       setStatus(Status.CREATING);
       const mint = new PublicKey(nft.mint.publicKey);
-      console.log("\nMint", mint.toBase58());
       const tokenAccount = getAssociatedTokenAddressSync(mint, publicKey);
-      console.log("TokenAccount", tokenAccount.toBase58());
       try {
         setStatus(Status.WAITING);
         const tx = await program.methods
@@ -142,7 +137,7 @@ const ShopifyDialog = ({
       toast({
         description: "Order created!",
       });
-      setStatus(Status.SUCCESS);
+      setStatus(Status.IDLE);
       setOpen(false);
     } catch (error) {
       console.log("Failed to create order:", error);
@@ -225,7 +220,6 @@ const ShopifyDialog = ({
               {status == Status.WAITING && "WAITING FOR CONFIRMATION"}
               {status == Status.CONFIRMED && "CONFIRMED"}
               {status == Status.ORDERING && "CREATING ORDER"}
-              {status == Status.SUCCESS && "ORDER CREATED"}
               {status == Status.ERROR && "ERROR. TRY AGAIN!"}
             </Button>
           </>

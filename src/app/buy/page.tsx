@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DigitalAssetWithToken } from "@metaplex-foundation/mpl-token-metadata";
-import BuyNFT from "@/components/buy/BuyNFT";
+import { useToast } from "@/hooks/use-toast";
 import {
   Carousel,
   CarouselContent,
@@ -11,10 +11,12 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { OWNER_PUBLICKEY } from "@/config/solana";
+import BuyNFT from "@/components/buy/BuyNFT";
 
 const BuyPage = () => {
   const [collectionNFTs, setCollectionNFTs] =
     useState<DigitalAssetWithToken[]>();
+  const { toast } = useToast();
 
   useEffect(() => {
     const updateCollectionNFTs = async () => {
@@ -23,8 +25,14 @@ const BuyPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        cache: "no-cache",
       });
+
+      if (!response.ok) {
+        toast({
+          variant: "destructive",
+          description: "NFT Fetch Error!",
+        });
+      }
 
       const data: DigitalAssetWithToken[] = await response.json();
       setCollectionNFTs(

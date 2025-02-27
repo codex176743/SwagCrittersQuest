@@ -55,7 +55,11 @@ const RedeemProductContent = ({
           (image: any) => image.id === selectedVariantInfo.image_id
         );
         setVariantID(selectedVariantInfo.id);
-        setImageUrl(selectedImage.src);
+        if (title == "Default Title") {
+          setImageUrl(productInfo.image.src);
+        } else {
+          setImageUrl(selectedImage.src);
+        }
       }
     }
   }, [selectedVariant]);

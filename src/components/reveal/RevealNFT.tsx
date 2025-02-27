@@ -11,6 +11,7 @@ import {
   MINT_AUTHORITY,
   SYSTEM_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID,
+  connection_1,
 } from "@/config/solana";
 import { useToast } from "@/hooks/use-toast";
 import NFTDialog from "./NFTDialog";
@@ -57,10 +58,19 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         collectionPDA
       );
 
-      const currentTime = Math.floor(new Date().getTime() / 1000);
+      const slot = await connection_1.getSlot();
+      const currentTime = await connection_1.getBlockTime(slot);
+      if (!currentTime) {
+        toast({
+          variant: "destructive",
+          description: "Network Error! Can not reveal now.",
+        });
+        setIsLoading(false);
+        return;
+      }
       const mintTime = revealState.mintTime.toNumber();
       const allowTime = collectionState.allowTime.toNumber();
-      const delayTime = collectionState.delayTime.toNumber() - 43200;
+      const delayTime = collectionState.delayTime.toNumber();
 
       if (currentTime < allowTime || currentTime < mintTime + delayTime) {
         toast({
@@ -70,40 +80,39 @@ const RevealNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         setIsLoading(false);
         return;
       }
-
-      // const [collectionName, nftID] = nft.metadata.name.split("#");
-      const collectionName = nft.metadata.name;
-      const nftID = revealState.nftId.toString();
-      const shopify_Id = await getShopifyID(
-        collectionName.trim(),
-        nftID.trim()
-      );
-
-      const product = await getProducts(shopify_Id);
-      const nft_name = product["title"];
-      const ipfsImageUrl = await getFileUrl(product["image"]["src"]);
-      setName(product["title"]);
-      setImageUrl(product["image"]["src"]);
-
-      const jsonData = {
-        name: nft_name,
-        symbol: "SWAGBOX",
-        description: "This is a Revealed Swag Box.",
-        image: ipfsImageUrl,
-        external_url: "https://swag.critters.quest",
-        attributes: [
-          {
-            trait_type: "Status",
-            value: "Revealed",
-          },
-        ],
-      };
-      const ipfsJsonUrl = await getJsonUrl(jsonData);
-
-      const mintAddress = new PublicKey(nft.mint.publicKey);
-      const mintMetadata = await getMetadata(mintAddress);
-
       try {
+        const [collectionName, nftID] = nft.metadata.name.split("#");
+        // const collectionName = nft.metadata.name;
+        // const nftID = revealState.nftId.toString();
+
+        const shopify_Id = await getShopifyID(
+          collectionName.trim(),
+          nftID.trim()
+        );
+        const product = await getProducts(shopify_Id);
+        const nft_name = product["title"];
+        const ipfsImageUrl = await getFileUrl(product["image"]["src"]);
+        setName(product["title"]);
+        setImageUrl(product["image"]["src"]);
+
+        const jsonData = {
+          name: nft_name,
+          symbol: "SWAGBOX",
+          description: "This is a Revealed Swag Box.",
+          image: ipfsImageUrl,
+          external_url: "https://store.critters.quest",
+          attributes: [
+            {
+              trait_type: "Status",
+              value: "Revealed",
+            },
+          ],
+        };
+        const ipfsJsonUrl = await getJsonUrl(jsonData);
+
+        const mintAddress = new PublicKey(nft.mint.publicKey);
+        const mintMetadata = await getMetadata(mintAddress);
+
         const tx = await program.methods
           .revealNft(nft_name, ipfsJsonUrl, shopify_Id)
           .accountsPartial({

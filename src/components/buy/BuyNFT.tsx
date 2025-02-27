@@ -64,11 +64,8 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
             accountInfo.data
           );
           setMintedNumber(decodedData.mintCount);
-          setTotalNumber(decodedData.countLimit);
         } catch (error) {
           console.error("Error decoding account data:", error);
-        } finally {
-          setIsLoading(false);
         }
       }
     );
@@ -89,7 +86,6 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
 
     const mintKeypair = Keypair.generate();
     const mint = mintKeypair.publicKey;
-    console.log("\nMint", mint.toBase58());
 
     const collectionState = await program.account.collectionState.fetch(
       collectionPDA
@@ -124,13 +120,8 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     const ipfsJsonUrl = await getJsonUrl(jsonData);
     const collection_mint = new anchor.web3.PublicKey(nft.mint.publicKey);
     const metadata = await getMetadata(mint);
-    console.log("Metadata", metadata.toBase58());
-
     const masterEdition = await getMasterEdition(mint);
-    console.log("Master Edition", masterEdition.toBase58());
-
     const destination = getAssociatedTokenAddress(mint, publicKey);
-    console.log("Destination", destination.toBase58());
 
     const transaction = new Transaction();
 
@@ -156,13 +147,8 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
     );
 
     const collectionMetadata = await getMetadata(collection_mint);
-    console.log("Collection Metadata", collectionMetadata.toBase58());
-
     const collectionMasterEdition = await getMasterEdition(collection_mint);
-    console.log(
-      "Collection Master Edition",
-      collectionMasterEdition.toBase58()
-    );
+
     transaction.add(
       await program.methods
         .verifyCollection()
@@ -202,6 +188,7 @@ const BuyNFT = ({ nft }: { nft: DigitalAssetWithToken }) => {
         variant: "destructive",
         description: "Failed to buy NFT!",
       });
+    } finally {
       setIsLoading(false);
     }
   };

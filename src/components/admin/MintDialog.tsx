@@ -12,6 +12,7 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { Keypair, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { getMetadata, getMasterEdition } from "@/lib/get-pda-address";
 import {
   MINT_AUTHORITY,
@@ -49,7 +50,6 @@ import { Label } from "@/components/ui/label";
 import { getFileUrl, getJsonUrl } from "@/lib/get-ipfs-url";
 import { useToast } from "@/hooks/use-toast";
 import { useAnchor } from "@/hooks/useAnchor";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 // import { pinata } from "@/config/pinata";
 
 const FormSchema = z.object({
@@ -132,7 +132,7 @@ const MintDialog = () => {
         symbol,
         description: data.description,
         seller_fee_basis_points: 500,
-        external_url: "https://swag.critters.quest",
+        external_url: "https://store.critters.quest",
         image: ipfsImageUrl,
         properties: {
           files: [
@@ -150,19 +150,12 @@ const MintDialog = () => {
       const delay_time = 86400 * data.delay_time;
       const collectionKeypair = Keypair.generate();
       const collectionMint = collectionKeypair.publicKey;
-      console.log("\nCollection Mint Key: ", collectionMint.toBase58());
       const metadata = await getMetadata(collectionMint);
-      console.log("Collection Metadata Account: ", metadata.toBase58());
       const masterEdition = await getMasterEdition(collectionMint);
-      console.log(
-        "Collection Master Edition Account: ",
-        masterEdition.toBase58()
-      );
       const destination = getAssociatedTokenAddressSync(
         collectionMint,
         OWNER_PUBLICKEY
       );
-      console.log("Destination ATA: ", destination.toBase58());
       const transaction = new Transaction();
       transaction.add(
         await program.methods
@@ -220,7 +213,7 @@ const MintDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="flex justify-center">
+        <div className="flex w-full justify-center">
           <button
             disabled={isloading}
             className="p-2 font-semibold bg-yellow-500 hover:bg-yellow-300"
